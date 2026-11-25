@@ -1,734 +1,1466 @@
-<!-- ... existing code ... -->
-    <title>BuscaFarma | Comparador de Preços de Medicamentos e Farmácias Online</title>
-    <meta name="description" content="Compare preços de medicamentos em tempo real nas principais farmácias online do Brasil. Encontre ofertas, genéricos e economize até 70% em relação ao PMC Anvisa.">
-    
-    <!-- Metadados PWA e Mobile Web App -->
-    <meta name="theme-color" content="#091b33">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BuscaFarma">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="BuscaFarma">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuscaFarma — Comparador de Preços de Medicamentos Online e Tabela CMED</title>
+  <meta name="description" content="Compare preços de medicamentos genéricos, de referência e similares nas principais farmácias online do Brasil com tabela oficial CMED/ANVISA por estado." />
+  <meta name="theme-color" content="#091b33" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BuscaFarma" />
+  <link rel="canonical" href="https://buscafarma.dukeprecisa.com.br/" />
 
-    <!-- Links dinâmicos de Favicon, Apple Touch Icon e Manifest PWA -->
-    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="">
-    <link id="dynamicAppleIcon" rel="apple-touch-icon" sizes="180x180" href="">
-    <link id="dynamicManifest" rel="manifest" href="">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-<!-- ... existing code ... -->
-            <div class="flex items-center gap-3">
-                <span id="offlineStatusBadge" class="hidden items-center gap-1 text-[11px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full">
-                    Modo Offline
-                </span>
-                <button onclick="openAdminModal('pwa')" class="text-health-400 hover:text-health-300 font-semibold transition flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Ícones & Arquivos PWA
-                </button>
-                <span class="text-slate-600">|</span>
-                <button onclick="openAdminModal('feed')" class="text-slate-300 hover:text-white underline decoration-slate-600 hover:decoration-white transition flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
-                    Painel Admin / Feed JSON
-                </button>
-            </div>
+  <!-- Favicon SVG Embutido -->
+  <link id="favicon-svg" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23091b33'/%3E%3Ccircle cx='29' cy='29' r='16' fill='none' stroke='%2310b981' stroke-width='5'/%3E%3Cline x1='41' y1='41' x2='52' y2='52' stroke='%2310b981' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M29 21v16M21 29h16' stroke='%23ffffff' stroke-width='4.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link id="apple-touch-icon" rel="apple-touch-icon" href="" />
+  <link id="pwa-manifest" rel="manifest" href="" />
+
+  <!-- Google AdSense: Descomente e insira seu Publisher ID (ca-pub-...) quando aprovado -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script> -->
+
+  <style>
+    :root {
+      --navy: #091b33;
+      --navy-light: #132d52;
+      --emerald: #059669;
+      --emerald-bright: #10b981;
+      --emerald-bg: #ecfdf5;
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --amber: #d97706;
+      --radius: 14px;
+      --shadow: 0 4px 18px -2px rgba(9, 27, 51, 0.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    button, input, select, textarea { font-family: inherit; }
+    a { text-decoration: none; color: inherit; }
+
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 18px; }
+
+    /* Top Bar / Rede DukePrecisa */
+    .top-network {
+      background: #051020;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .top-network-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .network-links { display: flex; gap: 14px; }
+    .network-links a:hover { color: #fff; }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #6ee7b7;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    /* Header */
+    header {
+      background: var(--navy);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 66px;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+    }
+    .brand span.highlight { color: var(--emerald-bright); }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .uf-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+    }
+    .uf-selector select {
+      background: transparent;
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+    }
+    .uf-selector select option { color: #0f172a; }
+
+    .btn-header {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-header:hover { background: rgba(255,255,255,0.18); }
+    .btn-pwa {
+      background: var(--emerald);
+      border-color: var(--emerald-bright);
+    }
+    .btn-pwa:hover { background: #047857; }
+
+    /* Hero Search */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: #fff;
+      padding: 36px 0 44px;
+    }
+    .hero h1 {
+      font-size: clamp(1.55rem, 3.2vw, 2.25rem);
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      color: #cbd5e1;
+      font-size: 0.96rem;
+      margin-bottom: 20px;
+      max-width: 680px;
+    }
+    .search-box {
+      position: relative;
+      max-width: 780px;
+    }
+    .search-input-wrap {
+      display: flex;
+      background: #fff;
+      border-radius: 14px;
+      padding: 6px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+    .search-input-wrap input {
+      flex: 1;
+      border: none;
+      padding: 12px 14px;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+      border-radius: 10px;
+    }
+    .search-btn {
+      background: var(--emerald);
+      color: #fff;
+      border: none;
+      padding: 0 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .search-btn:hover { background: #047857; }
+    .quick-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      align-items: center;
+    }
+    .quick-tag {
+      background: rgba(255,255,255,0.1);
+      color: #e2e8f0;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 3px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .quick-tag:hover { background: rgba(16,185,129,0.25); border-color: #10b981; }
+
+    /* AdSense Slots (Anti-CLS) */
+    .ad-container {
+      margin: 22px 0;
+      text-align: center;
+    }
+    .ad-tag {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+    .ad-slot {
+      min-height: 90px;
+      background: #eef2f7;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      font-size: 0.84rem;
+      padding: 12px;
+    }
+    .ad-slot.hidden { display: none; }
+
+    /* Filtros */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .filter-pill {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .filter-pill.active {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+    .sort-select {
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text);
+      background: #fff;
+    }
+
+    /* Grid de Produtos */
+    .results-meta {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .med-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .med-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+    .med-card:hover {
+      transform: translateY(-3px);
+      border-color: #93c5fd;
+    }
+    .badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 6px;
+    }
+    .type-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .type-generico { background: #fef3c7; color: #92400e; }
+    .type-referencia { background: #dbeafe; color: #1e40af; }
+    .type-similar { background: #f3e8ff; color: #6b21a8; }
+    .discount-badge {
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .med-title {
+      font-size: 1.06rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .med-active {
+      font-size: 0.83rem;
+      color: var(--emerald);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .med-lab {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .price-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .pmc-line {
+      font-size: 0.76rem;
+      color: #64748b;
+      text-decoration: line-through;
+    }
+    .best-price {
+      font-size: 1.42rem;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+    .store-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .btn-compare {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .btn-compare:hover { background: var(--emerald); }
+
+    /* Card Nativo In-Feed AdSense */
+    .infeed-ad-card {
+      background: #f8fafc;
+      border: 1px dashed #94a3b8;
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #64748b;
+      min-height: 240px;
+    }
+
+    /* Seção Editorial SEO (Requisito AdSense) */
+    .editorial-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      margin: 28px 0 40px;
+    }
+    .editorial-box h2 { font-size: 1.25rem; margin-bottom: 10px; }
+    .editorial-box p { color: var(--muted); font-size: 0.92rem; margin-bottom: 12px; }
+    .editorial-cols {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+    .editorial-cols h3 { font-size: 0.98rem; margin-bottom: 4px; }
+
+    /* Footer */
+    footer {
+      background: var(--navy);
+      color: #94a3b8;
+      padding: 36px 0 26px;
+      font-size: 0.85rem;
+    }
+    .footer-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 18px;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-links button {
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .footer-links button:hover { color: #fff; text-decoration: underline; }
+
+    /* Modais */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(9, 27, 51, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 60;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-panel {
+      background: #fff;
+      width: 100%;
+      max-width: 760px;
+      max-height: 88vh;
+      overflow-y: auto;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+    }
+    .close-btn {
+      background: #f1f5f9;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+
+    /* Offer Rows */
+    .offer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    .offer-row.best {
+      border-color: var(--emerald);
+      background: #f0fdf4;
+    }
+    .offer-price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .btn-store {
+      background: var(--emerald);
+      color: #fff;
+      padding: 9px 16px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 0.86rem;
+      display: inline-block;
+    }
+    .btn-store:hover { background: #047857; }
+
+    /* Form Admin */
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .code-box {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 12px;
+      border-radius: 10px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      margin-top: 8px;
+    }
+    .btn-action {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 0.86rem;
+      cursor: pointer;
+    }
+    .btn-action.green { background: var(--emerald); }
+
+    /* Banner LGPD */
+    .lgpd-banner {
+      position: fixed;
+      bottom: 14px;
+      left: 14px;
+      right: 14px;
+      max-width: 960px;
+      margin: 0 auto;
+      background: #091b33;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      padding: 14px 18px;
+      border-radius: 12px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      z-index: 55;
+      font-size: 0.84rem;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+    }
+    .lgpd-banner.show { display: flex; flex-wrap: wrap; }
+
+    .legal-content h4 { margin: 14px 0 6px; font-size: 0.98rem; color: var(--navy); }
+    .legal-content p { font-size: 0.9rem; color: var(--muted); margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de Rede DukePrecisa -->
+  <div class="top-network">
+    <div class="container top-network-inner">
+      <div class="network-links">
+        <a href="https://dukeprecisa.com.br">← Portal DukePrecisa</a>
+        <a href="https://calculatudobox.dukeprecisa.com.br">CalculaTudoBox</a>
+        <a href="https://invescalc.dukeprecisa.com.br">InvesCalc</a>
+      </div>
+      <div class="status-pill">
+        <span class="status-dot" id="netDot"></span>
+        <span id="netStatus">Online • Tabela CMED Atualizada</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cabeçalho Principal -->
+  <header>
+    <div class="container header-inner">
+      <a href="/" class="brand">
+        <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="16" fill="#132d52"/>
+          <circle cx="29" cy="29" r="16" fill="none" stroke="#10b981" stroke-width="5"/>
+          <line x1="41" y1="41" x2="52" y2="52" stroke="#10b981" stroke-width="6" stroke-linecap="round"/>
+          <path d="M29 21v16M21 29h16" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"/>
+        </svg>
+        <span>Busca<span class="highlight">Farma</span></span>
+      </a>
+
+      <div class="header-actions">
+        <div class="uf-selector" title="Ajusta o ICMS e o Preço Máximo ao Consumidor (CMED)">
+          <span>📍 Estado:</span>
+          <select id="ufSelect" aria-label="Selecionar Estado (ICMS)">
+            <option value="18" selected>SP / MG / PR (ICMS 18%)</option>
+            <option value="20">RJ / RS / BA / PE (ICMS 20%)</option>
+            <option value="17">SC / GO / DF / ES (ICMS 17%)</option>
+            <option value="19">CE / RN / PB / AL (ICMS 19%)</option>
+            <option value="21">PI / MA / AM (ICMS 21%)</option>
+          </select>
         </div>
+
+        <button type="button" class="btn-header btn-pwa" id="installPwaBtn" onclick="triggerPwaInstall()">📲 Instalar App</button>
+        <button type="button" class="btn-header" onclick="openAdminModal('adsense')">⚙️ AdSense & PWA</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Área de Busca -->
+  <section class="hero">
+    <div class="container">
+      <h1>Compare preços de remédios nas farmácias online</h1>
+      <p>Pesquise pelo nome do medicamento, princípio ativo, laboratório ou código de barras (EAN) e compare ofertas reais frente ao Preço Máximo ao Consumidor (CMED).</p>
+
+      <div class="search-box">
+        <div class="search-input-wrap">
+          <input type="search" id="searchInput" placeholder="Ex: Dipirona 1g, Losartana 50mg, Omeprazol, Amoxicilina..." autocomplete="off" />
+          <button type="button" class="search-btn" onclick="renderCatalog()">Buscar</button>
+        </div>
+        <div class="quick-tags">
+          <span>Mais buscados:</span>
+          <button type="button" class="quick-tag" onclick="quickSearch('Dipirona')">Dipirona</button>
+          <button type="button" class="quick-tag" onclick="quickSearch('Losartana')">Losartana</button>
+          <button type="button" class="quick-tag" onclick="quickSearch('Omeprazol')">Omeprazol</button>
+          <button type="button" class="quick-tag" onclick="quickSearch('Amoxicilina')">Amoxicilina</button>
+          <button type="button" class="quick-tag" onclick="quickSearch('Ibuprofeno')">Ibuprofeno</button>
+          <button type="button" class="quick-tag" onclick="quickSearch('Rosuvastatina')">Rosuvastatina</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Banner AdSense Topo -->
+    <div class="ad-container" id="adTopWrapper">
+      <div class="ad-tag">Publicidade</div>
+      <div class="ad-slot" id="adTopSlot">
+        Espaço reservado para Banner Superior Responsivo (Google AdSense) — Configure em "AdSense & PWA"
+      </div>
     </div>
 
-    <!-- Cabeçalho Principal -->
-    <header class="bg-navy-900 text-white sticky top-0 z-40 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4">
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
-                
-                <!-- Logo e Seletor de UF (Mobile) -->
-                <div class="w-full lg:w-auto flex items-center justify-between">
-                    <a href="#" onclick="resetAllFilters(); return false;" class="flex items-center gap-2.5 group">
-                        <div class="bg-gradient-to-br from-health-500 to-health-700 p-2 rounded-xl shadow-md group-hover:from-health-400 group-hover:to-health-600 transition relative">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v10m-5-5h10"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16.5 16.5L20 20"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <span class="text-2xl font-extrabold tracking-tight text-white">Busca<span class="text-health-500">Farma</span></span>
-                            <span class="block text-[10px] uppercase tracking-widest text-slate-400 -mt-1">Comparador Inteligente</span>
-                        </div>
-                    </a>
+    <!-- Barra de Filtros -->
+    <div class="toolbar">
+      <div class="filter-pills" id="categoryFilters">
+        <button type="button" class="filter-pill active" data-cat="todos" onclick="setCategory('todos', this)">Todos</button>
+        <button type="button" class="filter-pill" data-cat="Genérico" onclick="setCategory('Genérico', this)">Genéricos</button>
+        <button type="button" class="filter-pill" data-cat="Referência" onclick="setCategory('Referência', this)">Referência</button>
+        <button type="button" class="filter-pill" data-cat="Similar" onclick="setCategory('Similar', this)">Similares</button>
+      </div>
 
-                    <!-- Ações Rápidas Mobile (Instalar PWA + Seletor UF) -->
-                    <div class="flex lg:hidden items-center gap-2">
-                        <button onclick="triggerPwaInstall()" id="installPwaBtnMobile" class="flex items-center gap-1.5 bg-health-600 hover:bg-health-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-sm transition">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            <span>App</span>
-                        </button>
+      <div>
+        <select id="sortSelect" class="sort-select" onchange="renderCatalog()" aria-label="Ordenar resultados">
+          <option value="menor-preco">Ordenar: Menor Preço</option>
+          <option value="maior-desconto">Ordenar: Maior Desconto vs PMC</option>
+          <option value="az">Ordenar: Nome (A–Z)</option>
+        </select>
+      </div>
+    </div>
 
-                        <!-- Seletor UF Mobile -->
-                        <div class="flex items-center bg-navy-800 border border-slate-700 rounded-xl px-2.5 py-1.5">
-                            <svg class="w-4 h-4 text-health-500 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <select id="ufSelectMobile" onchange="handleUfChange(this.value)" aria-label="Selecionar Estado" class="bg-transparent text-sm font-semibold text-white focus:outline-none cursor-pointer">
-                                <option value="SP" class="text-slate-900">SP (ICMS 18%)</option>
-                                <option value="RJ" class="text-slate-900">RJ (ICMS 20%)</option>
-                                <option value="MG" class="text-slate-900">MG (ICMS 18%)</option>
-                                <option value="PE" class="text-slate-900">PE (ICMS 20,5%)</option>
-                                <option value="BA" class="text-slate-900">BA (ICMS 20,5%)</option>
-                                <option value="RS" class="text-slate-900">RS (ICMS 17%)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-<!-- ... existing code ... -->
-                <!-- Seletor de Estado/UF e Botão Instalar App (Desktop) -->
-                <div class="hidden lg:flex items-center gap-2.5">
-                    <button onclick="triggerPwaInstall()" id="installPwaBtnDesktop" class="flex items-center gap-2 bg-health-600 hover:bg-health-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-md transition border border-health-400/30" title="Instalar BuscaFarma como aplicativo">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        <span>Instalar App</span>
-                    </button>
+    <div class="results-meta">
+      <span id="resultsCount">Carregando medicamentos...</span>
+      <span>Valores ajustados para alíquota ICMS de <strong id="icmsLabel">18%</strong></span>
+    </div>
 
-                    <div class="flex items-center gap-2 bg-navy-800 border border-slate-700/80 rounded-xl px-3.5 py-2 hover:border-health-500/50 transition">
-                        <div class="bg-health-500/20 p-1.5 rounded-lg text-health-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        </div>
-                        <div>
-                            <span class="block text-[10px] uppercase tracking-wider text-slate-400 leading-none">Sua Região / ICMS</span>
-                            <select id="ufSelectDesktop" onchange="handleUfChange(this.value)" aria-label="Selecionar Estado" class="bg-transparent text-sm font-bold text-white focus:outline-none cursor-pointer mt-0.5">
-                                <option value="SP" class="text-slate-900">São Paulo (SP)</option>
-                                <option value="RJ" class="text-slate-900">Rio de Janeiro (RJ)</option>
-                                <option value="MG" class="text-slate-900">Minas Gerais (MG)</option>
-                                <option value="PE" class="text-slate-900">Pernambuco (PE)</option>
-                                <option value="BA" class="text-slate-900">Bahia (BA)</option>
-                                <option value="RS" class="text-slate-900">Rio Grande do Sul (RS)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
+    <!-- Grade de Medicamentos -->
+    <div class="med-grid" id="medGrid"></div>
 
+    <!-- Banner AdSense Inferior -->
+    <div class="ad-container" id="adBottomWrapper">
+      <div class="ad-tag">Publicidade</div>
+      <div class="ad-slot" id="adBottomSlot">
+        Espaço reservado para Banner Inferior Responsivo (Google AdSense)
+      </div>
+    </div>
+
+    <!-- Conteúdo Editorial Informativo (SEO & Aprovação AdSense) -->
+    <section class="editorial-box">
+      <h2>Como funciona a comparação de preços no BuscaFarma?</h2>
+      <p>O <strong>BuscaFarma</strong> organiza ofertas de medicamentos comercializados por redes de farmácias licenciadas no Brasil, cruzando o código de barras (EAN) e o princípio ativo com a tabela oficial de Preço Máximo ao Consumidor (PMC) divulgada pela <strong>CMED / ANVISA</strong>.</p>
+      <div class="editorial-cols">
+        <div>
+          <h3>1. Preço Máximo ao Consumidor (PMC)</h3>
+          <p>É o valor teto autorizado pelo governo brasileiro que uma farmácia pode cobrar por um medicamento, variando conforme a alíquota de ICMS de cada estado.</p>
+        </div>
+        <div>
+          <h3>2. Economia com Medicamentos Genéricos</h3>
+          <p>Os medicamentos genéricos possuem exatamente o mesmo princípio ativo, dose e forma farmacêutica do medicamento de referência, com eficácia comprovada pela ANVISA e custo reduzido.</p>
+        </div>
+        <div>
+          <h3>3. Compra Direta na Farmácia</h3>
+          <p>O BuscaFarma não vende medicamentos diretamente: ao escolher a melhor oferta, você é redirecionado para o site oficial da farmácia parceira para concluir seu pedido com segurança.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <strong style="color:#fff; font-size:1.05rem;">BuscaFarma • Rede DukePrecisa</strong>
+          <p style="max-width:480px; margin-top:4px;">Comparador informativo de preços de medicamentos. Não incentivamos a automedicação. Consulte sempre um médico ou farmacêutico.</p>
+        </div>
+        <div class="footer-links">
+          <button type="button" onclick="openLegalModal('privacidade')">Política de Privacidade</button>
+          <button type="button" onclick="openLegalModal('termos')">Termos de Uso & Isenção Médica</button>
+          <button type="button" onclick="openLegalModal('contato')">Contato</button>
+          <button type="button" onclick="openAdminModal('adsense')">Configurar AdSense</button>
+          <button type="button" onclick="openAdminModal('pwa')">Arquivos PWA & Ícones</button>
+        </div>
+      </div>
+      <p>© <span id="yearSpan"></span> BuscaFarma (buscafarma.dukeprecisa.com.br) — Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Modal Comparador de Ofertas -->
+  <div id="compareModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <span id="modalMedBadge" class="type-badge type-generico">Genérico</span>
+          <h3 id="modalMedTitle" style="margin-top:6px; font-size:1.25rem;">Medicamento</h3>
+          <p id="modalMedSub" style="font-size:0.85rem; color:var(--muted);">Princípio ativo • EAN</p>
+        </div>
+        <button type="button" class="close-btn" onclick="closeModal('compareModal')" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="tabs">
+        <button type="button" class="tab-btn active" id="tabOffersBtn" onclick="switchCompareTab('offers')">Ofertas nas Farmácias</button>
+        <button type="button" class="tab-btn" id="tabEquivBtn" onclick="switchCompareTab('equiv')">Mesmo Princípio Ativo (Genéricos)</button>
+      </div>
+
+      <div id="compareTabContent"></div>
+    </div>
+  </div>
+
+  <!-- Modal Admin: AdSense, PWA & JSON -->
+  <div id="adminModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size:1.2rem;">Painel do Webmaster — AdSense, PWA & Catálogo</h3>
+          <p style="font-size:0.84rem; color:var(--muted);">Configure monetização, baixe os ícones PWA e o arquivo ads.txt.</p>
+        </div>
+        <button type="button" class="close-btn" onclick="closeModal('adminModal')" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="tabs">
+        <button type="button" class="tab-btn active" id="admTabAdsense" onclick="switchAdminTab('adsense')">💰 Google AdSense</button>
+        <button type="button" class="tab-btn" id="admTabPwa" onclick="switchAdminTab('pwa')">📲 Ícones & Arquivos PWA</button>
+        <button type="button" class="tab-btn" id="admTabData" onclick="switchAdminTab('data')">📦 Dados JSON</button>
+      </div>
+
+      <div id="adminTabContent"></div>
+    </div>
+  </div>
+
+  <!-- Modal Páginas Legais -->
+  <div id="legalModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h3 id="legalTitle" style="font-size:1.18rem;">Informação Legal</h3>
+        <button type="button" class="close-btn" onclick="closeModal('legalModal')" aria-label="Fechar">✕</button>
+      </div>
+      <div id="legalBody" class="legal-content"></div>
+    </div>
+  </div>
+
+  <!-- Banner LGPD -->
+  <div id="lgpdBanner" class="lgpd-banner">
+    <span>Usamos cookies essenciais e de publicidade (Google AdSense) para personalizar anúncios e analisar o tráfego conforme nossa <button type="button" onclick="openLegalModal('privacidade')" style="background:none;border:none;color:#6ee7b7;text-decoration:underline;cursor:pointer;">Política de Privacidade</button>.</span>
+    <button type="button" class="btn-action green" onclick="acceptLgpd()">Concordar e Fechar</button>
+  </div>
+
+  <script>
+    document.getElementById('yearSpan').textContent = new Date().getFullYear();
+
+    // Base Inicial de Medicamentos (Compatível com esquema CMED + Feeds de Afiliados)
+    let MEDICAMENTOS = [
+      {
+        id: 1,
+        nome: "Dipirona Monoidratada 1g (10 Comprimidos)",
+        principioAtivo: "Dipirona Monoidratada",
+        categoria: "Genérico",
+        laboratorio: "Medley",
+        ean: "7896422505413",
+        pmcBase18: 16.90,
+        ofertas: [
+          { farmacia: "Drogasil", preco: 8.49, entrega: "Retire em 1h ou Frete Grátis", url: "https://www.drogasil.com.br" },
+          { farmacia: "Pague Menos", preco: 8.99, entrega: "Entrega Rápida", url: "https://www.paguemenos.com.br" },
+          { farmacia: "Droga Raia", preco: 9.29, entrega: "Retire na Loja", url: "https://www.drogaraia.com.br" },
+          { farmacia: "Drogaria São Paulo", preco: 9.75, entrega: "Entrega Expressa", url: "https://www.drogariasaopaulo.com.br" }
+        ]
+      },
+      {
+        id: 2,
+        nome: "Novalgina 1g (10 Comprimidos Efervescentes)",
+        principioAtivo: "Dipirona Monoidratada",
+        categoria: "Referência",
+        laboratorio: "Sanofi",
+        ean: "7891058017422",
+        pmcBase18: 31.40,
+        ofertas: [
+          { farmacia: "Droga Raia", preco: 22.90, entrega: "Retire em 1h", url: "https://www.drogaraia.com.br" },
+          { farmacia: "Drogasil", preco: 23.50, entrega: "Entrega Hoje", url: "https://www.drogasil.com.br" },
+          { farmacia: "Panvel", preco: 24.10, entrega: "Frete Econômico", url: "https://www.panvel.com" }
+        ]
+      },
+      {
+        id: 3,
+        nome: "Losartana Potássica 50mg (30 Comprimidos)",
+        principioAtivo: "Losartana Potássica",
+        categoria: "Genérico",
+        laboratorio: "EMS",
+        ean: "7896004714523",
+        pmcBase18: 19.80,
+        ofertas: [
+          { farmacia: "Pague Menos", preco: 6.49, entrega: "Retire Grátis na Loja", url: "https://www.paguemenos.com.br" },
+          { farmacia: "Drogasil", preco: 6.99, entrega: "Entrega Expressa", url: "https://www.drogasil.com.br" },
+          { farmacia: "Drogaria Pacheco", preco: 7.50, entrega: "Entrega Hoje", url: "https://www.drogariaspacheco.com.br" }
+        ]
+      },
+      {
+        id: 4,
+        nome: "Omeprazol 20mg (28 Cápsulas)",
+        principioAtivo: "Omeprazol",
+        categoria: "Genérico",
+        laboratorio: "Neo Química",
+        ean: "7896714207315",
+        pmcBase18: 24.50,
+        ofertas: [
+          { farmacia: "Drogaria São Paulo", preco: 9.90, entrega: "Retire em 1h", url: "https://www.drogariasaopaulo.com.br" },
+          { farmacia: "Drogasil", preco: 10.49, entrega: "Entrega Rápida", url: "https://www.drogasil.com.br" },
+          { farmacia: "Pague Menos", preco: 11.20, entrega: "Retire na Loja", url: "https://www.paguemenos.com.br" }
+        ]
+      },
+      {
+        id: 5,
+        nome: "Amoxicilina 500mg (21 Cápsulas) — Receita",
+        principioAtivo: "Amoxicilina Tri-hidratada",
+        categoria: "Genérico",
+        laboratorio: "Eurofarma",
+        ean: "7891317456122",
+        pmcBase18: 34.20,
+        ofertas: [
+          { farmacia: "Droga Raia", preco: 16.80, entrega: "Retirada com Receita na Loja", url: "https://www.drogaraia.com.br" },
+          { farmacia: "Drogasil", preco: 17.40, entrega: "Retirada com Receita na Loja", url: "https://www.drogasil.com.br" },
+          { farmacia: "Pague Menos", preco: 18.90, entrega: "Retirada com Receita", url: "https://www.paguemenos.com.br" }
+        ]
+      },
+      {
+        id: 6,
+        nome: "Ibuprofeno 600mg (20 Comprimidos)",
+        principioAtivo: "Ibuprofeno",
+        categoria: "Genérico",
+        laboratorio: "Prati-Donaduzzi",
+        ean: "7899547510234",
+        pmcBase18: 22.10,
+        ofertas: [
+          { farmacia: "Drogasil", preco: 11.30, entrega: "Entrega Hoje", url: "https://www.drogasil.com.br" },
+          { farmacia: "Pague Menos", preco: 11.95, entrega: "Retire Grátis", url: "https://www.paguemenos.com.br" },
+          { farmacia: "Droga Raia", preco: 12.40, entrega: "Entrega Expressa", url: "https://www.drogaraia.com.br" }
+        ]
+      },
+      {
+        id: 7,
+        nome: "Rosuvastatina Cálcica 10mg (30 Comprimidos)",
+        principioAtivo: "Rosuvastatina Cálcica",
+        categoria: "Genérico",
+        laboratorio: "Sandoz",
+        ean: "7897595618901",
+        pmcBase18: 58.90,
+        ofertas: [
+          { farmacia: "Droga Raia", preco: 21.90, entrega: "Frete Grátis acima de R$ 99", url: "https://www.drogaraia.com.br" },
+          { farmacia: "Drogasil", preco: 22.50, entrega: "Retire em 1h", url: "https://www.drogasil.com.br" },
+          { farmacia: "Drogaria São Paulo", preco: 24.90, entrega: "Entrega Rápida", url: "https://www.drogariasaopaulo.com.br" }
+        ]
+      },
+      {
+        id: 8,
+        nome: "Crestor 10mg (30 Comprimidos)",
+        principioAtivo: "Rosuvastatina Cálcica",
+        categoria: "Referência",
+        laboratorio: "AstraZeneca",
+        ean: "7896206402198",
+        pmcBase18: 129.40,
+        ofertas: [
+          { farmacia: "Drogasil", preco: 89.90, entrega: "Frete Grátis", url: "https://www.drogasil.com.br" },
+          { farmacia: "Droga Raia", preco: 91.50, entrega: "Retire em 1h", url: "https://www.drogaraia.com.br" },
+          { farmacia: "Panvel", preco: 94.00, entrega: "Entrega Expressa", url: "https://www.panvel.com" }
+        ]
+      }
+    ];
+
+    let currentCategory = 'todos';
+    let selectedMed = null;
+    let adsenseConfig = JSON.parse(localStorage.getItem('bf_adsense') || '{"pubId":"","slotTop":"","slotBottom":"","slotInfeed":"","hidePlaceholders":false}');
+
+    function formatBRL(val) {
+      return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // Fator de ajuste tributário ICMS por UF (Base = 18%)
+    function getIcmsMultiplier() {
+      const icms = parseFloat(document.getElementById('ufSelect').value || '18');
+      document.getElementById('icmsLabel').textContent = icms + '%';
+      return (1 - 0.18) / (1 - (icms / 100));
+    }
+
+    function setCategory(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      renderCatalog();
+    }
+
+    function quickSearch(term) {
+      document.getElementById('searchInput').value = term;
+      renderCatalog();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderCatalog);
+    document.getElementById('ufSelect').addEventListener('change', renderCatalog);
+
+    function renderCatalog() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const sortBy = document.getElementById('sortSelect').value;
+      const mult = getIcmsMultiplier();
+
+      let list = MEDICAMENTOS.map(m => {
+        const pmc = +(m.pmcBase18 * mult).toFixed(2);
+        const ofertasAjustadas = m.ofertas
+          .map(o => ({ ...o, precoFinal: +(o.preco * mult).toFixed(2) }))
+          .sort((a, b) => a.precoFinal - b.precoFinal);
+        const menorPreco = ofertasAjustadas[0].precoFinal;
+        const desconto = Math.max(0, Math.round(((pmc - menorPreco) / pmc) * 100));
+        return { ...m, pmc, ofertasAjustadas, menorPreco, desconto };
+      });
+
+      if (currentCategory !== 'todos') {
+        list = list.filter(m => m.categoria === currentCategory);
+      }
+
+      if (query) {
+        list = list.filter(m =>
+          m.nome.toLowerCase().includes(query) ||
+          m.principioAtivo.toLowerCase().includes(query) ||
+          m.laboratorio.toLowerCase().includes(query) ||
+          m.ean.includes(query)
+        );
+      }
+
+      if (sortBy === 'menor-preco') {
+        list.sort((a, b) => a.menorPreco - b.menorPreco);
+      } else if (sortBy === 'maior-desconto') {
+        list.sort((a, b) => b.desconto - a.desconto);
+      } else if (sortBy === 'az') {
+        list.sort((a, b) => a.nome.localeCompare(b.nome));
+      }
+
+      document.getElementById('resultsCount').textContent =
+        list.length === 1 ? '1 medicamento encontrado' : `${list.length} medicamentos encontrados`;
+
+      const grid = document.getElementById('medGrid');
+      if (list.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; background:#fff; padding:32px; border-radius:14px; text-align:center; border:1px solid var(--border);">
+          <strong>Nenhum medicamento encontrado para "${query}".</strong>
+          <p style="color:var(--muted); margin-top:6px;">Tente buscar pelo princípio ativo (ex: Dipirona, Losartana) ou limpe os filtros.</p>
+        </div>`;
+        return;
+      }
+
+      let html = '';
+      list.forEach((med, idx) => {
+        const badgeClass = med.categoria === 'Genérico' ? 'type-generico' : (med.categoria === 'Referência' ? 'type-referencia' : 'type-similar');
+        html += `
+          <article class="med-card">
+            <div>
+              <div class="badge-row">
+                <span class="type-badge ${badgeClass}">${med.categoria}</span>
+                <span class="discount-badge">-${med.desconto}% vs PMC</span>
+              </div>
+              <h3 class="med-title">${med.nome}</h3>
+              <div class="med-active">${med.principioAtivo}</div>
+              <div class="med-lab">Lab: ${med.laboratorio} • EAN: ${med.ean}</div>
             </div>
-<!-- ... existing code ... -->
+            <div>
+              <div class="price-box">
+                <div class="pmc-line">PMC Teto CMED: ${formatBRL(med.pmc)}</div>
+                <div class="best-price">${formatBRL(med.menorPreco)}</div>
+                <div class="store-count">A partir de <strong>${med.ofertasAjustadas[0].farmacia}</strong> (${med.ofertasAjustadas.length} ofertas)</div>
+              </div>
+              <button type="button" class="btn-compare" onclick="openCompareModal(${med.id})">Comparar ${med.ofertasAjustadas.length} ofertas →</button>
+            </div>
+          </article>
+        `;
+
+        // Insere anúncio nativo In-Feed após o 4º card se placeholders não estiverem ocultos
+        if (idx === 3 && !adsenseConfig.hidePlaceholders) {
+          html += `
+            <div class="infeed-ad-card" aria-label="Publicidade">
+              <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Publicidade</span>
+              <div id="adInfeedSlot">Bloco Nativo In-Feed (Google AdSense)</div>
+            </div>
+          `;
+        }
+      });
+
+      grid.innerHTML = html;
+      applyAdsenseSlots();
+    }
+
+    // Modal Comparador
+    function openCompareModal(id) {
+      const mult = getIcmsMultiplier();
+      const raw = MEDICAMENTOS.find(m => m.id === id);
+      if (!raw) return;
+
+      const pmc = +(raw.pmcBase18 * mult).toFixed(2);
+      const ofertasAjustadas = raw.ofertas
+        .map(o => ({ ...o, precoFinal: +(o.preco * mult).toFixed(2) }))
+        .sort((a, b) => a.precoFinal - b.precoFinal);
+
+      selectedMed = { ...raw, pmc, ofertasAjustadas };
+
+      const badge = document.getElementById('modalMedBadge');
+      badge.textContent = raw.categoria;
+      badge.className = 'type-badge ' + (raw.categoria === 'Genérico' ? 'type-generico' : (raw.categoria === 'Referência' ? 'type-referencia' : 'type-similar'));
+
+      document.getElementById('modalMedTitle').textContent = raw.nome;
+      document.getElementById('modalMedSub').textContent = `Princípio Ativo: ${raw.principioAtivo} • Lab: ${raw.laboratorio} • EAN: ${raw.ean} • PMC CMED: ${formatBRL(pmc)}`;
+
+      switchCompareTab('offers');
+      document.getElementById('compareModal').classList.add('open');
+    }
+
+    function switchCompareTab(tab) {
+      document.getElementById('tabOffersBtn').classList.toggle('active', tab === 'offers');
+      document.getElementById('tabEquivBtn').classList.toggle('active', tab === 'equiv');
+      const box = document.getElementById('compareTabContent');
+
+      if (tab === 'offers') {
+        box.innerHTML = selectedMed.ofertasAjustadas.map((of, i) => {
+          const eco = Math.max(0, selectedMed.pmc - of.precoFinal);
+          return `
+            <div class="offer-row ${i === 0 ? 'best' : ''}">
+              <div>
+                <div style="font-weight:800; font-size:1rem;">${of.farmacia} ${i === 0 ? '<span style="background:#059669;color:#fff;font-size:0.7rem;padding:2px 7px;border-radius:5px;margin-left:6px;">MELHOR PREÇO</span>' : ''}</div>
+                <div style="font-size:0.82rem; color:var(--muted); margin-top:2px;">${of.entrega} • Economia de ${formatBRL(eco)} frente ao teto CMED</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="offer-price">${formatBRL(of.precoFinal)}</div>
+                <a href="${of.url}" target="_blank" rel="noopener nofollow sponsored" class="btn-store" style="margin-top:4px;">Ir para a loja ↗</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        const mult = getIcmsMultiplier();
+        const equivs = MEDICAMENTOS.filter(m => m.principioAtivo === selectedMed.principioAtivo && m.id !== selectedMed.id);
+        if (equivs.length === 0) {
+          box.innerHTML = `<p style="color:var(--muted); padding:16px 0;">Não há outras apresentações cadastradas com o princípio ativo <strong>${selectedMed.principioAtivo}</strong> no momento.</p>`;
+          return;
+        }
+        box.innerHTML = `<p style="font-size:0.86rem; color:var(--muted); margin-bottom:12px;">Opções equivalentes com o mesmo princípio ativo (<strong>${selectedMed.principioAtivo}</strong>):</p>` +
+          equivs.map(eq => {
+            const minPrice = Math.min(...eq.ofertas.map(o => o.preco)) * mult;
+            return `
+              <div class="offer-row">
                 <div>
-                    <h4 class="text-white font-bold text-sm mb-3">Integração e Arquitetura PWA</h4>
-                    <p class="text-xs leading-relaxed mb-3">
-                        Este portal opera como Progressive Web App (PWA) com feed estruturado JSON compatível com GitHub Pages e Cloudflare Pages.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="openAdminModal('pwa')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-health-600/20 hover:bg-health-600/30 text-health-300 text-xs font-semibold transition border border-health-500/40">
-                            <svg class="w-4 h-4 text-health-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            Baixar Ícones & PWA
-                        </button>
-                        <button onclick="openAdminModal('feed')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-white text-xs font-semibold transition border border-slate-700">
-                            <svg class="w-4 h-4 text-health-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                            Importar Feed JSON
-                        </button>
-                    </div>
+                  <span class="type-badge ${eq.categoria === 'Genérico' ? 'type-generico' : 'type-referencia'}">${eq.categoria}</span>
+                  <div style="font-weight:700; margin-top:4px;">${eq.nome}</div>
+                  <div style="font-size:0.8rem; color:var(--muted);">Laboratório: ${eq.laboratorio}</div>
                 </div>
+                <div style="text-align:right;">
+                  <div class="offer-price">${formatBRL(minPrice)}</div>
+                  <button type="button" class="btn-action" style="margin-top:4px;" onclick="openCompareModal(${eq.id})">Ver ofertas</button>
+                </div>
+              </div>
+            `;
+          }).join('');
+      }
+    }
+
+    // Painel Admin (AdSense, PWA, JSON)
+    function openAdminModal(tab) {
+      document.getElementById('adminModal').classList.add('open');
+      switchAdminTab(tab || 'adsense');
+    }
+
+    function switchAdminTab(tab) {
+      document.getElementById('admTabAdsense').classList.toggle('active', tab === 'adsense');
+      document.getElementById('admTabPwa').classList.toggle('active', tab === 'pwa');
+      document.getElementById('admTabData').classList.toggle('active', tab === 'data');
+      const content = document.getElementById('adminTabContent');
+
+      if (tab === 'adsense') {
+        const pub = adsenseConfig.pubId || 'ca-pub-0000000000000000';
+        const cleanPub = pub.replace(/^ca-/, '');
+        content.innerHTML = `
+          <div class="form-group">
+            <label>Publisher ID do Google AdSense (ex: ca-pub-1234567890123456)</label>
+            <input type="text" id="cfgPubId" value="${adsenseConfig.pubId}" placeholder="ca-pub-0000000000000000" />
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:10px;">
+            <div class="form-group">
+              <label>Slot ID Banner Topo</label>
+              <input type="text" id="cfgSlotTop" value="${adsenseConfig.slotTop}" placeholder="1234567890" />
             </div>
-<!-- ... existing code ... -->
-    <!-- MODAL 2: Painel Admin / Importar Feed JSON & Gerador PWA -->
-    <div id="adminModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
-        <div class="flex items-end sm:items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div onclick="closeAdminModal()" class="fixed inset-0 bg-navy-950/75 backdrop-blur-sm transition-opacity"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl w-full border border-slate-200">
-                <div class="bg-navy-950 text-white px-6 py-4 flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
-                        <div class="bg-health-500/20 text-health-400 p-2 rounded-lg">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold">Painel Admin, Feed JSON & Arquivos PWA</h3>
-                            <p class="text-xs text-slate-400">Arquitetura estática pronta para GitHub Pages e Cloudflare Pages</p>
-                        </div>
-                    </div>
-                    <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
-                <!-- Abas do Painel Admin -->
-                <div class="px-6 pt-3 border-b border-slate-200 flex gap-6 bg-slate-50">
-                    <button id="adminTabPwaBtn" onclick="switchAdminTab('pwa')" class="pb-3 text-sm font-bold border-b-2 border-health-600 text-health-700 transition flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Baixar Ícones & Arquivos PWA
-                    </button>
-                    <button id="adminTabFeedBtn" onclick="switchAdminTab('feed')" class="pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-navy-900 transition flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                        Importar Feed JSON (CMED)
-                    </button>
-                </div>
-
-                <!-- ABA 1: Gerador e Download de Ícones & Arquivos PWA -->
-                <div id="adminPwaContent" class="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
-                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs text-navy-900 space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <p class="font-bold text-emerald-900 flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-health-600"></span>
-                                PWA Ativo em Memória + Pacote de Produção para GitHub/Cloudflare
-                            </p>
-                            <span id="swStatusText" class="text-[11px] font-mono bg-white px-2 py-0.5 rounded border border-emerald-200 text-emerald-800">SW: Verificando...</span>
-                        </div>
-                        <p class="text-slate-700 leading-relaxed">
-                            Os ícones, favicon e manifest já estão ativos dinamicamente nesta página. Para garantir <strong>100% de instalabilidade PWA em produção no GitHub Pages ou Cloudflare Pages</strong>, baixe os 5 arquivos abaixo e coloque-os na pasta raiz junto ao seu <code class="bg-white px-1.5 py-0.5 rounded border border-emerald-200 font-mono">index.html</code>.
-                        </p>
-                    </div>
-
-                    <!-- Pré-visualização dos Ícones Gerados via Canvas/SVG -->
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Pré-visualização dos Ícones Gerados (Identidade BuscaFarma)</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <!-- Card Favicon SVG -->
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center text-center justify-between">
-                                <div class="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center p-2 mb-3">
-                                    <img id="previewFaviconImg" alt="Favicon SVG" class="w-12 h-12 object-contain">
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-navy-900 font-mono">favicon.svg</p>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">Ícone vetorial para abas do navegador</p>
-                                </div>
-                                <button onclick="downloadPwaAsset('favicon.svg')" class="mt-3 w-full py-2 px-3 bg-navy-900 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    Baixar SVG
-                                </button>
-                            </div>
-
-                            <!-- Card Icon 192x192 -->
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center text-center justify-between">
-                                <div class="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden mb-3">
-                                    <img id="previewIcon192Img" alt="Ícone PWA 192x192" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-navy-900 font-mono">icon-192.png</p>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">Android / Apple Touch (192x192px)</p>
-                                </div>
-                                <button onclick="downloadPwaAsset('icon-192.png')" class="mt-3 w-full py-2 px-3 bg-navy-900 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    Baixar PNG 192
-                                </button>
-                            </div>
-
-                            <!-- Card Icon 512x512 Maskable -->
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center text-center justify-between">
-                                <div class="w-16 h-16 rounded-full bg-white shadow-sm border-2 border-health-500 flex items-center justify-center overflow-hidden mb-3" title="Simulação Maskable Adaptável">
-                                    <img id="previewIcon512Img" alt="Ícone PWA 512x512 Maskable" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-navy-900 font-mono">icon-512.png</p>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">Splash Screen & Maskable (512x512px)</p>
-                                </div>
-                                <button onclick="downloadPwaAsset('icon-512.png')" class="mt-3 w-full py-2 px-3 bg-navy-900 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    Baixar PNG 512
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Arquivos de Configuração PWA (manifest.json e sw.js) -->
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Arquivos de Configuração & Cache Offline</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between gap-3">
-                                <div>
-                                    <p class="text-xs font-bold text-navy-900 font-mono">manifest.json</p>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">Metadados standalone, cores e ícones</p>
-                                </div>
-                                <button onclick="downloadPwaAsset('manifest.json')" class="px-3.5 py-2 bg-slate-800 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition shrink-0 flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    Baixar JSON
-                                </button>
-                            </div>
-
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between gap-3">
-                                <div>
-                                    <p class="text-xs font-bold text-navy-900 font-mono">sw.js</p>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">Service Worker com cache offline</p>
-                                </div>
-                                <button onclick="downloadPwaAsset('sw.js')" class="px-3.5 py-2 bg-slate-800 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition shrink-0 flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                    Baixar JS
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-200">
-                        <button onclick="downloadAllPwaBundle()" class="px-4 py-2.5 bg-health-600 hover:bg-health-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            Baixar Todos os 5 Arquivos PWA
-                        </button>
-                        <button onclick="closeAdminModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
-                            Fechar
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ABA 2: Importação de Feed JSON -->
-                <div id="adminFeedContent" class="hidden p-6 space-y-5 max-h-[75vh] overflow-y-auto">
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-navy-900 space-y-1.5">
-                        <p class="font-bold">Como automatizar este site no GitHub Pages / Cloudflare Pages:</p>
-                        <p class="text-slate-700 leading-relaxed">
-                            Para manter os preços atualizados sem servidor backend, basta configurar um script agendado (<strong>GitHub Actions</strong> ou <strong>Cloudflare Cron Trigger</strong>) que baixa a planilha mensal da CMED/ANVISA e os feeds XML/JSON das redes de afiliados (Awin, Lomadee, Rakuten), consolidando-os neste formato de objeto padronizado pelo código de barras (EAN).
-                        </p>
-                    </div>
-
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label for="jsonImportInput" class="text-xs font-bold uppercase tracking-wider text-slate-500">Testar Importação de Novo Medicamento (JSON):</label>
-                            <button onclick="loadSampleJsonTemplate()" class="text-xs font-semibold text-health-600 hover:underline">Restaurar exemplo pronto</button>
-                        </div>
-                        <textarea id="jsonImportInput" rows="11" class="w-full font-mono text-xs bg-slate-900 text-emerald-300 p-4 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-health-500"></textarea>
-                    </div>
-
-                    <div id="adminFeedback" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
-
-                    <div class="flex flex-wrap justify-end gap-3 pt-2">
-                        <button onclick="closeAdminModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
-                            Cancelar
-                        </button>
-                        <button onclick="importNewProductFromJson()" class="px-5 py-2.5 bg-health-600 hover:bg-health-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            Adicionar Medicamento ao Catálogo da Sessão
-                        </button>
-                    </div>
-                </div>
+            <div class="form-group">
+              <label>Slot ID Banner Inferior</label>
+              <input type="text" id="cfgSlotBottom" value="${adsenseConfig.slotBottom}" placeholder="0987654321" />
             </div>
-        </div>
-    </div>
-
-    <!-- MODAL 3: Guia de Instalação PWA (Fallback para iOS / Navegadores sem prompt automático) -->
-    <div id="installGuideModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
-        <div class="flex items-end sm:items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div onclick="closeInstallGuideModal()" class="fixed inset-0 bg-navy-950/75 backdrop-blur-sm transition-opacity"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200">
-                <div class="bg-navy-900 text-white px-5 py-4 flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
-                        <img id="guideModalIcon" alt="BuscaFarma App" class="w-9 h-9 rounded-xl border border-slate-700">
-                        <div>
-                            <h3 class="text-base font-extrabold">Instalar BuscaFarma App</h3>
-                            <p class="text-[11px] text-slate-300">Acesso rápido na tela inicial e modo offline</p>
-                        </div>
-                    </div>
-                    <button onclick="closeInstallGuideModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
-                <div class="p-5 space-y-4 text-xs text-slate-700">
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
-                        <p class="font-bold text-navy-900 flex items-center gap-1.5">
-                            <span class="bg-navy-900 text-white px-1.5 py-0.5 rounded text-[10px]">iOS</span> Safari (iPhone / iPad)
-                        </p>
-                        <p>1. Toque no botão <strong>Compartilhar</strong> (ícone de quadrado com seta para cima na barra inferior).</p>
-                        <p>2. Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</p>
-                    </div>
-
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
-                        <p class="font-bold text-navy-900 flex items-center gap-1.5">
-                            <span class="bg-health-600 text-white px-1.5 py-0.5 rounded text-[10px]">Android / PC</span> Chrome / Edge
-                        </p>
-                        <p>1. Abra o menu do navegador (<strong>⋮</strong>) no canto superior direito.</p>
-                        <p>2. Toque em <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.</p>
-                    </div>
-
-                    <div class="flex justify-end pt-1">
-                        <button onclick="closeInstallGuideModal()" class="w-full py-2.5 bg-navy-900 hover:bg-health-600 text-white font-bold rounded-xl transition">
-                            Entendi
-                        </button>
-                    </div>
-                </div>
+            <div class="form-group">
+              <label>Slot ID Nativo In-Feed</label>
+              <input type="text" id="cfgSlotInfeed" value="${adsenseConfig.slotInfeed}" placeholder="1122334455" />
             </div>
-        </div>
-    </div>
+          </div>
+          <div class="form-group">
+            <label style="display:flex; align-items:center; gap:8px; font-weight:500;">
+              <input type="checkbox" id="cfgHidePlaceholders" ${adsenseConfig.hidePlaceholders ? 'checked' : ''} style="width:auto;" />
+              Ocultar caixas cinzas de pré-visualização enquanto não houver anúncios ativos
+            </label>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+            <button type="button" class="btn-action green" onclick="saveAdsenseConfig()">Salvar Configurações</button>
+            <button type="button" class="btn-action" onclick="downloadAdsTxt()">⬇️ Baixar ads.txt</button>
+          </div>
+          <div>
+            <strong>Conteúdo do arquivo <code>ads.txt</code> (colocar na raiz de dukeprecisa.com.br):</strong>
+            <div class="code-box" id="adsTxtPreview">google.com, ${cleanPub}, DIRECT, f08c47fec0942fa0</div>
+          </div>
+        `;
+      } else if (tab === 'pwa') {
+        content.innerHTML = `
+          <p style="font-size:0.88rem; color:var(--muted); margin-bottom:14px;">Os ícones abaixo são gerados vetorialmente em alta definição. Baixe e envie para a raiz do seu repositório do <strong>BuscaFarma</strong> no GitHub / Cloudflare Pages:</p>
+          <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid var(--border); margin-bottom:16px;">
+            <div style="text-align:center;">
+              <img id="previewIcon192" width="72" height="72" style="border-radius:16px; box-shadow:0 4px 10px rgba(0,0,0,0.15);" alt="Ícone 192x192" />
+              <div style="font-size:0.75rem; margin-top:4px;">icon-192.png</div>
+            </div>
+            <div style="text-align:center;">
+              <img id="previewIcon512" width="72" height="72" style="border-radius:16px; box-shadow:0 4px 10px rgba(0,0,0,0.15);" alt="Ícone 512x512" />
+              <div style="font-size:0.75rem; margin-top:4px;">icon-512.png</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <button type="button" class="btn-action green" onclick="downloadIconPng(192)">⬇️ Baixar icon-192.png</button>
+              <button type="button" class="btn-action green" onclick="downloadIconPng(512)">⬇️ Baixar icon-512.png</button>
+              <button type="button" class="btn-action" onclick="downloadManifestFile()">⬇️ Baixar manifest.json</button>
+              <button type="button" class="btn-action" onclick="downloadSwFile()">⬇️ Baixar sw.js (Offline)</button>
+            </div>
+          </div>
+        `;
+        document.getElementById('previewIcon192').src = generateAppIconDataUrl(192);
+        document.getElementById('previewIcon512').src = generateAppIconDataUrl(512);
+      } else if (tab === 'data') {
+        content.innerHTML = `
+          <p style="font-size:0.86rem; color:var(--muted); margin-bottom:10px;">Estrutura JSON usada pelo comparador (pronta para integração com GitHub Actions / API CMED):</p>
+          <div class="code-box" style="max-height:260px;">${JSON.stringify(MEDICAMENTOS.slice(0, 2), null, 2)}</div>
+        `;
+      }
+    }
 
-    <!-- TOAST DE REDIRECIONAMENTO DE AFILIADO -->
-<!-- ... existing code ... -->
-        function openAdminModal(defaultTab = 'pwa') {
-            loadSampleJsonTemplate();
-            document.getElementById('adminFeedback').classList.add('hidden');
-            switchAdminTab(defaultTab);
-            document.getElementById('adminModal').classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-        }
+    function saveAdsenseConfig() {
+      adsenseConfig = {
+        pubId: document.getElementById('cfgPubId').value.trim(),
+        slotTop: document.getElementById('cfgSlotTop').value.trim(),
+        slotBottom: document.getElementById('cfgSlotBottom').value.trim(),
+        slotInfeed: document.getElementById('cfgSlotInfeed').value.trim(),
+        hidePlaceholders: document.getElementById('cfgHidePlaceholders').checked
+      };
+      localStorage.setItem('bf_adsense', JSON.stringify(adsenseConfig));
+      applyAdsenseSlots();
+      renderCatalog();
+      switchAdminTab('adsense');
+      alert('Configurações do Google AdSense salvas!');
+    }
 
-        function switchAdminTab(tab) {
-            const pwaBtn = document.getElementById('adminTabPwaBtn');
-            const feedBtn = document.getElementById('adminTabFeedBtn');
-            const pwaContent = document.getElementById('adminPwaContent');
-            const feedContent = document.getElementById('adminFeedContent');
+    function applyAdsenseSlots() {
+      const topW = document.getElementById('adTopWrapper');
+      const botW = document.getElementById('adBottomWrapper');
+      if (adsenseConfig.hidePlaceholders && !adsenseConfig.pubId) {
+        topW.style.display = 'none';
+        botW.style.display = 'none';
+      } else {
+        topW.style.display = 'block';
+        botW.style.display = 'block';
+      }
+    }
 
-            if (tab === 'pwa') {
-                pwaBtn.className = 'pb-3 text-sm font-bold border-b-2 border-health-600 text-health-700 transition flex items-center gap-1.5';
-                feedBtn.className = 'pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-navy-900 transition flex items-center gap-1.5';
-                pwaContent.classList.remove('hidden');
-                feedContent.classList.add('hidden');
-            } else {
-                feedBtn.className = 'pb-3 text-sm font-bold border-b-2 border-health-600 text-health-700 transition flex items-center gap-1.5';
-                pwaBtn.className = 'pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-navy-900 transition flex items-center gap-1.5';
-                feedContent.classList.remove('hidden');
-                pwaContent.classList.add('hidden');
-            }
-        }
+    function downloadFile(filename, content, mime) {
+      const blob = new Blob([content], { type: mime });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
 
-        function closeAdminModal() {
-// ... existing code ... -->
-        // Fecha modais com tecla ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeCompareModal();
-                closeAdminModal();
-                closeInstallGuideModal();
-            }
-        });
+    function downloadAdsTxt() {
+      const cleanPub = (adsenseConfig.pubId || 'pub-0000000000000000').replace(/^ca-/, '');
+      downloadFile('ads.txt', `google.com, ${cleanPub}, DIRECT, f08c47fec0942fa0\n`, 'text/plain');
+    }
 
-        /**
-         * ============================================================================
-         * GERADOR DINÂMICO DE FAVICON, ÍCONES PWA, MANIFEST E SERVICE WORKER
-         * ============================================================================
-         */
-        const PWA_ASSETS = {
-            faviconSvgString: '',
-            icon192DataUrl: '',
-            icon512DataUrl: '',
-            manifestJsonString: '',
-            swJsString: ''
-        };
+    // Geração Dinâmica de Ícones PNG e PWA
+    function generateAppIconDataUrl(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
 
-        let deferredInstallPrompt = null;
+      // Fundo Azul-Marinho
+      ctx.fillStyle = '#091b33';
+      ctx.fillRect(0, 0, size, size);
 
-        // Gera o SVG vetorial oficial da BuscaFarma (Cruz médica esmeralda + Lupa azul/branca)
-        function buildBuscaFarmaSvg() {
-            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0f294a"/>
-      <stop offset="100%" stop-color="#051020"/>
-    </linearGradient>
-    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#34d399"/>
-      <stop offset="100%" stop-color="#059669"/>
-    </linearGradient>
-  </defs>
-  <!-- Fundo Maskable Full-Bleed -->
-  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
-  <!-- Anel sutil interno -->
-  <rect x="28" y="28" width="456" height="456" rx="92" fill="none" stroke="#10b981" stroke-opacity="0.25" stroke-width="8"/>
-  <!-- Aro da Lupa -->
-  <circle cx="234" cy="234" r="126" fill="#091b33" stroke="url(#emeraldGrad)" stroke-width="32"/>
-  <!-- Cabo da Lupa -->
-  <line x1="326" y1="326" x2="412" y2="412" stroke="url(#emeraldGrad)" stroke-width="38" stroke-linecap="round"/>
-  <!-- Cruz Médica Moderna no centro da Lupa -->
-  <rect x="212" y="164" width="44" height="140" rx="14" fill="#ffffff"/>
-  <rect x="164" y="212" width="140" height="44" rx="14" fill="#10b981"/>
-</svg>`;
-        }
+      // Lupa Esmeralda
+      const cx = size * 0.45;
+      const cy = size * 0.45;
+      const r = size * 0.25;
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = size * 0.08;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
 
-        // Renderiza o SVG em um Canvas HTML5 para exportar PNGs reais (192x192 e 512x512 maskable)
-        function renderSvgToPngDataUrl(svgString, size) {
-            return new Promise((resolve) => {
-                const canvas = document.createElement('canvas');
-                canvas.width = size;
-                canvas.height = size;
-                const ctx = canvas.getContext('2d');
+      // Cabo da Lupa
+      ctx.beginPath();
+      ctx.moveTo(cx + r * 0.72, cy + r * 0.72);
+      ctx.lineTo(size * 0.81, size * 0.81);
+      ctx.stroke();
 
-                const img = new Image();
-                const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-                const url = URL.createObjectURL(svgBlob);
+      // Cruz Médica Branca
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = size * 0.07;
+      const arm = size * 0.12;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - arm);
+      ctx.lineTo(cx, cy + arm);
+      ctx.moveTo(cx - arm, cy);
+      ctx.lineTo(cx + arm, cy);
+      ctx.stroke();
 
-                img.onload = () => {
-                    // Preenche fundo sólido para garantir conformidade maskable sem transparência indesejada
-                    ctx.fillStyle = '#091b33';
-                    ctx.fillRect(0, 0, size, size);
-                    ctx.drawImage(img, 0, 0, size, size);
-                    URL.revokeObjectURL(url);
-                    resolve(canvas.toDataURL('image/png'));
-                };
+      return canvas.toDataURL('image/png');
+    }
 
-                img.onerror = () => {
-                    // Fallback direto no Canvas caso o navegador restrinja Blob SVG
-                    ctx.fillStyle = '#091b33';
-                    ctx.fillRect(0, 0, size, size);
-                    ctx.strokeStyle = '#10b981';
-                    ctx.lineWidth = size * 0.065;
-                    ctx.beginPath();
-                    ctx.arc(size * 0.46, size * 0.46, size * 0.24, 0, Math.PI * 2);
-                    ctx.stroke();
+    function downloadIconPng(size) {
+      const a = document.createElement('a');
+      a.href = generateAppIconDataUrl(size);
+      a.download = `icon-${size}.png`;
+      a.click();
+    }
 
-                    ctx.lineCap = 'round';
-                    ctx.beginPath();
-                    ctx.moveTo(size * 0.64, size * 0.64);
-                    ctx.lineTo(size * 0.80, size * 0.80);
-                    ctx.stroke();
+    function getManifestObject() {
+      return {
+        name: "BuscaFarma — Comparador de Preços de Remédios",
+        short_name: "BuscaFarma",
+        description: "Compare preços de medicamentos nas farmácias online com referência CMED/ANVISA.",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#091b33",
+        theme_color: "#091b33",
+        orientation: "portrait-primary",
+        icons: [
+          { src: generateAppIconDataUrl(192), sizes: "192x192", type: "image/png", purpose: "any maskable" },
+          { src: generateAppIconDataUrl(512), sizes: "512x512", type: "image/png", purpose: "any maskable" }
+        ]
+      };
+    }
 
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(size * 0.42, size * 0.32, size * 0.08, size * 0.28);
-                    ctx.fillStyle = '#10b981';
-                    ctx.fillRect(size * 0.32, size * 0.42, size * 0.28, size * 0.08);
-                    resolve(canvas.toDataURL('image/png'));
-                };
+    function downloadManifestFile() {
+      const m = getManifestObject();
+      m.icons = [
+        { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
+      ];
+      downloadFile('manifest.json', JSON.stringify(m, null, 2), 'application/json');
+    }
 
-                img.src = url;
-            });
-        }
-
-        // Gera o conteúdo de manifest.json e sw.js prontos para produção e Blob
-        function buildProductionFilesContent() {
-            const manifestObj = {
-                name: "BuscaFarma - Comparador de Preços de Medicamentos",
-                short_name: "BuscaFarma",
-                description: "Compare preços de medicamentos em tempo real nas principais farmácias online do Brasil com referência CMED/ANVISA.",
-                start_url: "./index.html",
-                scope: "./",
-                display: "standalone",
-                orientation: "portrait-primary",
-                theme_color: "#091b33",
-                background_color: "#091b33",
-                lang: "pt-BR",
-                categories: ["health", "medical", "shopping"],
-                icons: [
-                    {
-                        src: "./icon-192.png",
-                        sizes: "192x192",
-                        type: "image/png",
-                        purpose: "any"
-                    },
-                    {
-                        src: "./icon-512.png",
-                        sizes: "512x512",
-                        type: "image/png",
-                        purpose: "any maskable"
-                    },
-                    {
-                        src: "./favicon.svg",
-                        sizes: "any",
-                        type: "image/svg+xml",
-                        purpose: "any"
-                    }
-                ]
-            };
-
-            PWA_ASSETS.manifestJsonString = JSON.stringify(manifestObj, null, 2);
-
-            PWA_ASSETS.swJsString = `// Service Worker Oficial - BuscaFarma PWA (GitHub Pages / Cloudflare Pages)
-const CACHE_NAME = 'buscafarma-pwa-v1';
-const STATIC_ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './favicon.svg',
-  './icon-192.png',
-  './icon-512.png'
-];
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)).catch(() => {})
-  );
+    function getSwCode() {
+      return `const CACHE_NAME = 'buscafarma-v1';
+const ASSETS = ['/', '/index.html', '/manifest.json'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
 });
+self.addEventListener('fetch', e => {
+  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+});`;
+    }
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
-});
+    function downloadSwFile() {
+      downloadFile('sw.js', getSwCode(), 'application/javascript');
+    }
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
-          }
-          return networkResponse;
-        })
-        .catch(() => cachedResponse);
-      return cachedResponse || fetchPromise;
-    })
-  );
-});
-`;
-        }
+    // Inicializa PWA (Apple Touch Icon, Manifest Blob e Service Worker)
+    (function initPwa() {
+      document.getElementById('apple-touch-icon').href = generateAppIconDataUrl(180);
+      const manifestBlob = new Blob([JSON.stringify(getManifestObject())], { type: 'application/json' });
+      document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
 
-        // Inicializa todos os recursos PWA no navegador
-        async function initPwaSystem() {
-            try {
-                PWA_ASSETS.faviconSvgString = buildBuscaFarmaSvg();
-                const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(PWA_ASSETS.faviconSvgString);
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        const swBlob = new Blob([getSwCode()], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+      }
+    })();
 
-                // Injeta Favicon SVG imediatamente
-                document.getElementById('dynamicFavicon').href = svgDataUri;
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
 
-                // Gera ícones PNG reais (192x192 e 512x512)
-                const [png192, png512] = await Promise.all([
-                    renderSvgToPngDataUrl(PWA_ASSETS.faviconSvgString, 192),
-                    renderSvgToPngDataUrl(PWA_ASSETS.faviconSvgString, 512)
-                ]);
+    function triggerPwaInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(() => { deferredPrompt = null; });
+      } else {
+        alert('Para instalar o BuscaFarma no celular:\n\n• Android (Chrome): Toque nos 3 pontinhos no canto superior e escolha "Adicionar à tela inicial" ou "Instalar aplicativo".\n• iPhone (Safari): Toque no ícone de Compartilhar e selecione "Adicionar à Tela de Início".');
+      }
+    }
 
-                PWA_ASSETS.icon192DataUrl = png192;
-                PWA_ASSETS.icon512DataUrl = png512;
+    // Páginas Legais
+    const legalTexts = {
+      privacidade: {
+        title: 'Política de Privacidade — BuscaFarma',
+        body: `
+          <p><strong>Última atualização:</strong> Novembro de 2026</p>
+          <h4>1. Dados e Privacidade (LGPD)</h4>
+          <p>O <strong>BuscaFarma</strong> (buscafarma.dukeprecisa.com.br) respeita a privacidade dos usuários em conformidade com a Lei nº 13.709/2018 (LGPD). Não exigimos cadastro nem armazenamos dados pessoais ou receitas médicas.</p>
+          <h4>2. Cookies e Google AdSense</h4>
+          <p>Este site exibe anúncios veiculados pelo Google AdSense. O Google e seus parceiros utilizam cookies para exibir anúncios com base em visitas anteriores a este ou a outros sites. Você pode gerenciar ou desativar a personalização de anúncios nas <a href="https://adssettings.google.com" target="_blank" rel="noopener" style="color:#059669;text-decoration:underline;">Configurações de Anúncios do Google</a>.</p>
+          <h4>3. Redirecionamento para Farmácias</h4>
+          <p>Ao clicar em "Ir para a loja", você será direcionado ao ambiente oficial da farmácia escolhida, sujeito às políticas de privacidade e entrega do respectivo lojista.</p>
+        `
+      },
+      termos: {
+        title: 'Termos de Uso e Isenção de Responsabilidade Médica',
+        body: `
+          <h4>1. Natureza Informativa</h4>
+          <p>O <strong>BuscaFarma</strong> atua exclusivamente como ferramenta de pesquisa e comparação informativa de preços de medicamentos, sem comercializar produtos diretamente.</p>
+          <h4>2. Variação de Preços e Disponibilidade</h4>
+          <p>Os preços exibidos são referências baseadas nas tabelas públicas da CMED/ANVISA e ofertas divulgadas pelas farmácias online, podendo sofrer alterações de estoque, frete ou regras de receita médica no site final da loja.</p>
+          <h4>3. Advertência Sanitária</h4>
+          <p><strong>A PERSISTIREM OS SINTOMAS, O MÉDICO DEVERÁ SER CONSULTADO.</strong> Medicamentos sujeitos a prescrição médica exigem apresentação de receita conforme legislação sanitária vigente.</p>
+        `
+      },
+      contato: {
+        title: 'Contato — BuscaFarma',
+        body: `
+          <p>Para dúvidas, sugestões de medicamentos, parcerias comerciais ou solicitação de remoção/correção de dados, entre em contato com a equipe do portal <strong>DukePrecisa / BuscaFarma</strong>:</p>
+          <p><strong>E-mail:</strong> contato@dukeprecisa.com.br</p>
+          <p><strong>Portal Principal:</strong> <a href="https://dukeprecisa.com.br" style="color:#059669;text-decoration:underline;">dukeprecisa.com.br</a></p>
+        `
+      }
+    };
 
-                // Injeta Apple Touch Icon
-                document.getElementById('dynamicAppleIcon').href = png192;
+    function openLegalModal(key) {
+      const item = legalTexts[key];
+      if (!item) return;
+      document.getElementById('legalTitle').textContent = item.title;
+      document.getElementById('legalBody').innerHTML = item.body;
+      document.getElementById('legalModal').classList.add('open');
+    }
 
-                // Atualiza imagens de pré-visualização nos modais
-                document.getElementById('previewFaviconImg').src = svgDataUri;
-                document.getElementById('previewIcon192Img').src = png192;
-                document.getElementById('previewIcon512Img').src = png512;
-                document.getElementById('guideModalIcon').src = png192;
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
 
-                // Gera arquivos de produção
-                buildProductionFilesContent();
+    document.querySelectorAll('.modal-backdrop').forEach(m => {
+      m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+    });
 
-                // Cria Manifest dinâmico com Data URLs para funcionar mesmo sem arquivos externos no servidor
-                const dynamicManifestObj = JSON.parse(PWA_ASSETS.manifestJsonString);
-                dynamicManifestObj.start_url = window.location.href;
-                dynamicManifestObj.scope = './';
-                dynamicManifestObj.icons = [
-                    { src: png192, sizes: '192x192', type: 'image/png', purpose: 'any' },
-                    { src: png512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-                ];
+    // Status Online/Offline
+    function updateOnlineStatus() {
+      const dot = document.getElementById('netDot');
+      const txt = document.getElementById('netStatus');
+      if (navigator.onLine) {
+        dot.style.background = '#10b981';
+        txt.textContent = 'Online • Tabela CMED Atualizada';
+      } else {
+        dot.style.background = '#f59e0b';
+        txt.textContent = 'Modo Offline (PWA)';
+      }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
 
-                const manifestBlob = new Blob([JSON.stringify(dynamicManifestObj)], { type: 'application/manifest+json' });
-                const manifestBlobUrl = URL.createObjectURL(manifestBlob);
-                document.getElementById('dynamicManifest').href = manifestBlobUrl;
+    // LGPD
+    if (!localStorage.getItem('bf_lgpd_ok')) {
+      document.getElementById('lgpdBanner').classList.add('show');
+    }
+    function acceptLgpd() {
+      localStorage.setItem('bf_lgpd_ok', '1');
+      document.getElementById('lgpdBanner').classList.remove('show');
+    }
 
-                // Tenta registrar sw.js físico (se existir no GitHub/Cloudflare) com fallback para Blob SW
-                await registerDynamicServiceWorker();
-            } catch (error) {
-                console.warn('Aviso ao inicializar recursos PWA:', error);
-            }
-        }
-
-        async function registerDynamicServiceWorker() {
-            const swStatusEl = document.getElementById('swStatusText');
-            if (!('serviceWorker' in navigator)) {
-                if (swStatusEl) swStatusEl.textContent = 'SW: Não suportado neste navegador';
-                return;
-            }
-
-            try {
-                // Primeiro tenta registrar ./sw.js físico caso o usuário já tenha subido no repositório
-                const reg = await navigator.serviceWorker.register('./sw.js');
-                if (swStatusEl) swStatusEl.textContent = 'SW: Ativo (./sw.js)';
-                return reg;
-            } catch (_) {
-                // Fallback: registra Service Worker dinâmico via Blob URL
-                try {
-                    const swBlob = new Blob([PWA_ASSETS.swJsString], { type: 'application/javascript' });
-                    const swBlobUrl = URL.createObjectURL(swBlob);
-                    await navigator.serviceWorker.register(swBlobUrl);
-                    if (swStatusEl) swStatusEl.textContent = 'SW: Ativo (Blob Dinâmico)';
-                } catch (blobErr) {
-                    if (swStatusEl) swStatusEl.textContent = 'SW: Pronto para deploy (baixe sw.js)';
-                }
-            }
-        }
-
-        // Captura o evento nativo de instalação PWA (Chrome, Edge, Android)
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredInstallPrompt = e;
-            const btnDesk = document.getElementById('installPwaBtnDesktop');
-            const btnMob = document.getElementById('installPwaBtnMobile');
-            if (btnDesk) btnDesk.classList.add('ring-2', 'ring-white/60');
-            if (btnMob) btnMob.classList.add('ring-2', 'ring-white/60');
-        });
-
-        window.addEventListener('appinstalled', () => {
-            deferredInstallPrompt = null;
-            const btnDesk = document.getElementById('installPwaBtnDesktop');
-            const btnMob = document.getElementById('installPwaBtnMobile');
-            if (btnDesk) btnDesk.innerHTML = '<span>App Instalado ✓</span>';
-            if (btnMob) btnMob.innerHTML = '<span>Instalado ✓</span>';
-        });
-
-        async function triggerPwaInstall() {
-            if (deferredInstallPrompt) {
-                deferredInstallPrompt.prompt();
-                const { outcome } = await deferredInstallPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    deferredInstallPrompt = null;
-                }
-            } else {
-                // Abre guia visual rápido para iOS Safari ou navegadores sem prompt automático
-                document.getElementById('installGuideModal').classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-            }
-        }
-
-        function closeInstallGuideModal() {
-            document.getElementById('installGuideModal').classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        // Monitoramento de status Online/Offline
-        function updateOnlineStatus() {
-            const badge = document.getElementById('offlineStatusBadge');
-            if (!badge) return;
-            if (!navigator.onLine) {
-                badge.classList.remove('hidden');
-                badge.classList.add('inline-flex');
-            } else {
-                badge.classList.add('hidden');
-                badge.classList.remove('inline-flex');
-            }
-        }
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
-
-        // Funções de Download dos 5 arquivos físicos para o repositório GitHub / Cloudflare
-        function triggerFileDownload(href, filename) {
-            const a = document.createElement('a');
-            a.href = href;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        function downloadPwaAsset(filename) {
-            if (filename === 'favicon.svg') {
-                const blob = new Blob([PWA_ASSETS.faviconSvgString], { type: 'image/svg+xml;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                triggerFileDownload(url, 'favicon.svg');
-                setTimeout(() => URL.revokeObjectURL(url), 2000);
-            } else if (filename === 'icon-192.png') {
-                triggerFileDownload(PWA_ASSETS.icon192DataUrl, 'icon-192.png');
-            } else if (filename === 'icon-512.png') {
-                triggerFileDownload(PWA_ASSETS.icon512DataUrl, 'icon-512.png');
-            } else if (filename === 'manifest.json') {
-                const blob = new Blob([PWA_ASSETS.manifestJsonString], { type: 'application/json;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                triggerFileDownload(url, 'manifest.json');
-                setTimeout(() => URL.revokeObjectURL(url), 2000);
-            } else if (filename === 'sw.js') {
-                const blob = new Blob([PWA_ASSETS.swJsString], { type: 'application/javascript;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                triggerFileDownload(url, 'sw.js');
-                setTimeout(() => URL.revokeObjectURL(url), 2000);
-            }
-        }
-
-        function downloadAllPwaBundle() {
-            const files = ['favicon.svg', 'icon-192.png', 'icon-512.png', 'manifest.json', 'sw.js'];
-            files.forEach((file, idx) => {
-                setTimeout(() => downloadPwaAsset(file), idx * 320);
-            });
-        }
-
-        // Inicialização da Aplicação e do Sistema PWA
-        window.addEventListener('DOMContentLoaded', () => {
-            applyFilters();
-            updateOnlineStatus();
-            initPwaSystem();
-        });
-    </script>
+    // Inicialização
+    applyAdsenseSlots();
+    renderCatalog();
+  </script>
 </body>
 </html>
