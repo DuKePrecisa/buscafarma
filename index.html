@@ -16,7 +16,7 @@
   <link id="apple-touch-icon" rel="apple-touch-icon" href="" />
   <link id="pwa-manifest" rel="manifest" href="" />
 
-  <!-- Google AdSense: Descomente e insira seu Publisher ID (ca-pub-...) quando aprovado -->
+  <!-- Google AdSense: Descomente a linha abaixo e substitua ca-pub-0000000000000000 pelo seu ID real após aprovação -->
   <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script> -->
 
   <style>
@@ -31,7 +31,6 @@
       --text: #0f172a;
       --muted: #475569;
       --border: #e2e8f0;
-      --amber: #d97706;
       --radius: 14px;
       --shadow: 0 4px 18px -2px rgba(9, 27, 51, 0.07);
     }
@@ -43,12 +42,12 @@
       color: var(--text);
       line-height: 1.55;
     }
-    button, input, select, textarea { font-family: inherit; }
+    button, input, select { font-family: inherit; }
     a { text-decoration: none; color: inherit; }
 
     .container { max-width: 1180px; margin: 0 auto; padding: 0 18px; }
 
-    /* Top Bar / Rede DukePrecisa */
+    /* Barra Superior Rede DukePrecisa */
     .top-network {
       background: #051020;
       color: #94a3b8;
@@ -78,7 +77,7 @@
       background: #10b981;
     }
 
-    /* Header */
+    /* Cabeçalho */
     header {
       background: var(--navy);
       color: #fff;
@@ -131,11 +130,11 @@
     }
     .uf-selector select option { color: #0f172a; }
 
-    .btn-header {
-      background: rgba(255,255,255,0.1);
+    .btn-pwa {
+      background: var(--emerald);
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.18);
-      padding: 7px 12px;
+      border: 1px solid var(--emerald-bright);
+      padding: 7px 14px;
       border-radius: 10px;
       font-size: 0.84rem;
       font-weight: 600;
@@ -143,11 +142,6 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-    }
-    .btn-header:hover { background: rgba(255,255,255,0.18); }
-    .btn-pwa {
-      background: var(--emerald);
-      border-color: var(--emerald-bright);
     }
     .btn-pwa:hover { background: #047857; }
 
@@ -219,7 +213,7 @@
     }
     .quick-tag:hover { background: rgba(16,185,129,0.25); border-color: #10b981; }
 
-    /* AdSense Slots (Anti-CLS) */
+    /* Espaços AdSense (Anti-CLS) */
     .ad-container {
       margin: 22px 0;
       text-align: center;
@@ -240,10 +234,9 @@
       align-items: center;
       justify-content: center;
       color: #64748b;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       padding: 12px;
     }
-    .ad-slot.hidden { display: none; }
 
     /* Filtros */
     .toolbar {
@@ -399,7 +392,7 @@
     /* Card Nativo In-Feed AdSense */
     .infeed-ad-card {
       background: #f8fafc;
-      border: 1px dashed #94a3b8;
+      border: 1px dashed #cbd5e1;
       border-radius: var(--radius);
       padding: 18px;
       display: flex;
@@ -408,6 +401,7 @@
       justify-content: center;
       text-align: center;
       color: #64748b;
+      font-size: 0.82rem;
       min-height: 240px;
     }
 
@@ -429,7 +423,7 @@
     }
     .editorial-cols h3 { font-size: 0.98rem; margin-bottom: 4px; }
 
-    /* Footer */
+    /* Rodapé */
     footer {
       background: var(--navy);
       color: #94a3b8;
@@ -500,7 +494,7 @@
       cursor: pointer;
     }
 
-    /* Tabs */
+    /* Abas do Comparador */
     .tabs {
       display: flex;
       gap: 8px;
@@ -524,7 +518,7 @@
       border-color: var(--navy);
     }
 
-    /* Offer Rows */
+    /* Linhas de Ofertas */
     .offer-row {
       display: flex;
       justify-content: space-between;
@@ -556,32 +550,6 @@
     }
     .btn-store:hover { background: #047857; }
 
-    /* Form Admin */
-    .form-group { margin-bottom: 14px; }
-    .form-group label {
-      display: block;
-      font-size: 0.84rem;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%;
-      padding: 9px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 0.9rem;
-    }
-    .code-box {
-      background: #0f172a;
-      color: #e2e8f0;
-      padding: 12px;
-      border-radius: 10px;
-      font-family: monospace;
-      font-size: 0.8rem;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      margin-top: 8px;
-    }
     .btn-action {
       background: var(--navy);
       color: #fff;
@@ -623,7 +591,7 @@
 </head>
 <body>
 
-  <!-- Barra de Rede DukePrecisa -->
+  <!-- Barra Superior Rede DukePrecisa -->
   <div class="top-network">
     <div class="container top-network-inner">
       <div class="network-links">
@@ -663,8 +631,7 @@
           </select>
         </div>
 
-        <button type="button" class="btn-header btn-pwa" id="installPwaBtn" onclick="triggerPwaInstall()">📲 Instalar App</button>
-        <button type="button" class="btn-header" onclick="openAdminModal('adsense')">⚙️ AdSense & PWA</button>
+        <button type="button" class="btn-pwa" id="installPwaBtn" onclick="triggerPwaInstall()">📲 Instalar App</button>
       </div>
     </div>
   </header>
@@ -695,20 +662,21 @@
 
   <main class="container">
     <!-- Banner AdSense Topo -->
-    <div class="ad-container" id="adTopWrapper">
+    <div class="ad-container" aria-label="Publicidade">
       <div class="ad-tag">Publicidade</div>
-      <div class="ad-slot" id="adTopSlot">
-        Espaço reservado para Banner Superior Responsivo (Google AdSense) — Configure em "AdSense & PWA"
+      <div class="ad-slot">
+        <!-- Cole aqui a tag <ins class="adsbygoogle"> do seu bloco superior do Google AdSense -->
+        Publicidade
       </div>
     </div>
 
     <!-- Barra de Filtros -->
     <div class="toolbar">
-      <div class="filter-pills" id="categoryFilters">
-        <button type="button" class="filter-pill active" data-cat="todos" onclick="setCategory('todos', this)">Todos</button>
-        <button type="button" class="filter-pill" data-cat="Genérico" onclick="setCategory('Genérico', this)">Genéricos</button>
-        <button type="button" class="filter-pill" data-cat="Referência" onclick="setCategory('Referência', this)">Referência</button>
-        <button type="button" class="filter-pill" data-cat="Similar" onclick="setCategory('Similar', this)">Similares</button>
+      <div class="filter-pills">
+        <button type="button" class="filter-pill active" onclick="setCategory('todos', this)">Todos</button>
+        <button type="button" class="filter-pill" onclick="setCategory('Genérico', this)">Genéricos</button>
+        <button type="button" class="filter-pill" onclick="setCategory('Referência', this)">Referência</button>
+        <button type="button" class="filter-pill" onclick="setCategory('Similar', this)">Similares</button>
       </div>
 
       <div>
@@ -729,10 +697,11 @@
     <div class="med-grid" id="medGrid"></div>
 
     <!-- Banner AdSense Inferior -->
-    <div class="ad-container" id="adBottomWrapper">
+    <div class="ad-container" aria-label="Publicidade">
       <div class="ad-tag">Publicidade</div>
-      <div class="ad-slot" id="adBottomSlot">
-        Espaço reservado para Banner Inferior Responsivo (Google AdSense)
+      <div class="ad-slot">
+        <!-- Cole aqui a tag <ins class="adsbygoogle"> do seu bloco inferior do Google AdSense -->
+        Publicidade
       </div>
     </div>
 
@@ -769,8 +738,6 @@
           <button type="button" onclick="openLegalModal('privacidade')">Política de Privacidade</button>
           <button type="button" onclick="openLegalModal('termos')">Termos de Uso & Isenção Médica</button>
           <button type="button" onclick="openLegalModal('contato')">Contato</button>
-          <button type="button" onclick="openAdminModal('adsense')">Configurar AdSense</button>
-          <button type="button" onclick="openAdminModal('pwa')">Arquivos PWA & Ícones</button>
         </div>
       </div>
       <p>© <span id="yearSpan"></span> BuscaFarma (buscafarma.dukeprecisa.com.br) — Todos os direitos reservados.</p>
@@ -798,27 +765,6 @@
     </div>
   </div>
 
-  <!-- Modal Admin: AdSense, PWA & JSON -->
-  <div id="adminModal" class="modal-backdrop" role="dialog" aria-modal="true">
-    <div class="modal-panel">
-      <div class="modal-header">
-        <div>
-          <h3 style="font-size:1.2rem;">Painel do Webmaster — AdSense, PWA & Catálogo</h3>
-          <p style="font-size:0.84rem; color:var(--muted);">Configure monetização, baixe os ícones PWA e o arquivo ads.txt.</p>
-        </div>
-        <button type="button" class="close-btn" onclick="closeModal('adminModal')" aria-label="Fechar">✕</button>
-      </div>
-
-      <div class="tabs">
-        <button type="button" class="tab-btn active" id="admTabAdsense" onclick="switchAdminTab('adsense')">💰 Google AdSense</button>
-        <button type="button" class="tab-btn" id="admTabPwa" onclick="switchAdminTab('pwa')">📲 Ícones & Arquivos PWA</button>
-        <button type="button" class="tab-btn" id="admTabData" onclick="switchAdminTab('data')">📦 Dados JSON</button>
-      </div>
-
-      <div id="adminTabContent"></div>
-    </div>
-  </div>
-
   <!-- Modal Páginas Legais -->
   <div id="legalModal" class="modal-backdrop" role="dialog" aria-modal="true">
     <div class="modal-panel">
@@ -839,8 +785,7 @@
   <script>
     document.getElementById('yearSpan').textContent = new Date().getFullYear();
 
-    // Base Inicial de Medicamentos (Compatível com esquema CMED + Feeds de Afiliados)
-    let MEDICAMENTOS = [
+    const MEDICAMENTOS = [
       {
         id: 1,
         nome: "Dipirona Monoidratada 1g (10 Comprimidos)",
@@ -958,13 +903,11 @@
 
     let currentCategory = 'todos';
     let selectedMed = null;
-    let adsenseConfig = JSON.parse(localStorage.getItem('bf_adsense') || '{"pubId":"","slotTop":"","slotBottom":"","slotInfeed":"","hidePlaceholders":false}');
 
     function formatBRL(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // Fator de ajuste tributário ICMS por UF (Base = 18%)
     function getIcmsMultiplier() {
       const icms = parseFloat(document.getElementById('ufSelect').value || '18');
       document.getElementById('icmsLabel').textContent = icms + '%';
@@ -1059,19 +1002,17 @@
           </article>
         `;
 
-        // Insere anúncio nativo In-Feed após o 4º card se placeholders não estiverem ocultos
-        if (idx === 3 && !adsenseConfig.hidePlaceholders) {
+        if (idx === 3) {
           html += `
             <div class="infeed-ad-card" aria-label="Publicidade">
               <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Publicidade</span>
-              <div id="adInfeedSlot">Bloco Nativo In-Feed (Google AdSense)</div>
+              <div>Espaço Nativo In-Feed (Google AdSense)</div>
             </div>
           `;
         }
       });
 
       grid.innerHTML = html;
-      applyAdsenseSlots();
     }
 
     // Modal Comparador
@@ -1146,137 +1087,16 @@
       }
     }
 
-    // Painel Admin (AdSense, PWA, JSON)
-    function openAdminModal(tab) {
-      document.getElementById('adminModal').classList.add('open');
-      switchAdminTab(tab || 'adsense');
-    }
-
-    function switchAdminTab(tab) {
-      document.getElementById('admTabAdsense').classList.toggle('active', tab === 'adsense');
-      document.getElementById('admTabPwa').classList.toggle('active', tab === 'pwa');
-      document.getElementById('admTabData').classList.toggle('active', tab === 'data');
-      const content = document.getElementById('adminTabContent');
-
-      if (tab === 'adsense') {
-        const pub = adsenseConfig.pubId || 'ca-pub-0000000000000000';
-        const cleanPub = pub.replace(/^ca-/, '');
-        content.innerHTML = `
-          <div class="form-group">
-            <label>Publisher ID do Google AdSense (ex: ca-pub-1234567890123456)</label>
-            <input type="text" id="cfgPubId" value="${adsenseConfig.pubId}" placeholder="ca-pub-0000000000000000" />
-          </div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:10px;">
-            <div class="form-group">
-              <label>Slot ID Banner Topo</label>
-              <input type="text" id="cfgSlotTop" value="${adsenseConfig.slotTop}" placeholder="1234567890" />
-            </div>
-            <div class="form-group">
-              <label>Slot ID Banner Inferior</label>
-              <input type="text" id="cfgSlotBottom" value="${adsenseConfig.slotBottom}" placeholder="0987654321" />
-            </div>
-            <div class="form-group">
-              <label>Slot ID Nativo In-Feed</label>
-              <input type="text" id="cfgSlotInfeed" value="${adsenseConfig.slotInfeed}" placeholder="1122334455" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label style="display:flex; align-items:center; gap:8px; font-weight:500;">
-              <input type="checkbox" id="cfgHidePlaceholders" ${adsenseConfig.hidePlaceholders ? 'checked' : ''} style="width:auto;" />
-              Ocultar caixas cinzas de pré-visualização enquanto não houver anúncios ativos
-            </label>
-          </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
-            <button type="button" class="btn-action green" onclick="saveAdsenseConfig()">Salvar Configurações</button>
-            <button type="button" class="btn-action" onclick="downloadAdsTxt()">⬇️ Baixar ads.txt</button>
-          </div>
-          <div>
-            <strong>Conteúdo do arquivo <code>ads.txt</code> (colocar na raiz de dukeprecisa.com.br):</strong>
-            <div class="code-box" id="adsTxtPreview">google.com, ${cleanPub}, DIRECT, f08c47fec0942fa0</div>
-          </div>
-        `;
-      } else if (tab === 'pwa') {
-        content.innerHTML = `
-          <p style="font-size:0.88rem; color:var(--muted); margin-bottom:14px;">Os ícones abaixo são gerados vetorialmente em alta definição. Baixe e envie para a raiz do seu repositório do <strong>BuscaFarma</strong> no GitHub / Cloudflare Pages:</p>
-          <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid var(--border); margin-bottom:16px;">
-            <div style="text-align:center;">
-              <img id="previewIcon192" width="72" height="72" style="border-radius:16px; box-shadow:0 4px 10px rgba(0,0,0,0.15);" alt="Ícone 192x192" />
-              <div style="font-size:0.75rem; margin-top:4px;">icon-192.png</div>
-            </div>
-            <div style="text-align:center;">
-              <img id="previewIcon512" width="72" height="72" style="border-radius:16px; box-shadow:0 4px 10px rgba(0,0,0,0.15);" alt="Ícone 512x512" />
-              <div style="font-size:0.75rem; margin-top:4px;">icon-512.png</div>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              <button type="button" class="btn-action green" onclick="downloadIconPng(192)">⬇️ Baixar icon-192.png</button>
-              <button type="button" class="btn-action green" onclick="downloadIconPng(512)">⬇️ Baixar icon-512.png</button>
-              <button type="button" class="btn-action" onclick="downloadManifestFile()">⬇️ Baixar manifest.json</button>
-              <button type="button" class="btn-action" onclick="downloadSwFile()">⬇️ Baixar sw.js (Offline)</button>
-            </div>
-          </div>
-        `;
-        document.getElementById('previewIcon192').src = generateAppIconDataUrl(192);
-        document.getElementById('previewIcon512').src = generateAppIconDataUrl(512);
-      } else if (tab === 'data') {
-        content.innerHTML = `
-          <p style="font-size:0.86rem; color:var(--muted); margin-bottom:10px;">Estrutura JSON usada pelo comparador (pronta para integração com GitHub Actions / API CMED):</p>
-          <div class="code-box" style="max-height:260px;">${JSON.stringify(MEDICAMENTOS.slice(0, 2), null, 2)}</div>
-        `;
-      }
-    }
-
-    function saveAdsenseConfig() {
-      adsenseConfig = {
-        pubId: document.getElementById('cfgPubId').value.trim(),
-        slotTop: document.getElementById('cfgSlotTop').value.trim(),
-        slotBottom: document.getElementById('cfgSlotBottom').value.trim(),
-        slotInfeed: document.getElementById('cfgSlotInfeed').value.trim(),
-        hidePlaceholders: document.getElementById('cfgHidePlaceholders').checked
-      };
-      localStorage.setItem('bf_adsense', JSON.stringify(adsenseConfig));
-      applyAdsenseSlots();
-      renderCatalog();
-      switchAdminTab('adsense');
-      alert('Configurações do Google AdSense salvas!');
-    }
-
-    function applyAdsenseSlots() {
-      const topW = document.getElementById('adTopWrapper');
-      const botW = document.getElementById('adBottomWrapper');
-      if (adsenseConfig.hidePlaceholders && !adsenseConfig.pubId) {
-        topW.style.display = 'none';
-        botW.style.display = 'none';
-      } else {
-        topW.style.display = 'block';
-        botW.style.display = 'block';
-      }
-    }
-
-    function downloadFile(filename, content, mime) {
-      const blob = new Blob([content], { type: mime });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      a.click();
-    }
-
-    function downloadAdsTxt() {
-      const cleanPub = (adsenseConfig.pubId || 'pub-0000000000000000').replace(/^ca-/, '');
-      downloadFile('ads.txt', `google.com, ${cleanPub}, DIRECT, f08c47fec0942fa0\n`, 'text/plain');
-    }
-
-    // Geração Dinâmica de Ícones PNG e PWA
+    // Ícones e PWA Autônomo
     function generateAppIconDataUrl(size) {
       const canvas = document.createElement('canvas');
       canvas.width = size;
       canvas.height = size;
       const ctx = canvas.getContext('2d');
 
-      // Fundo Azul-Marinho
       ctx.fillStyle = '#091b33';
       ctx.fillRect(0, 0, size, size);
 
-      // Lupa Esmeralda
       const cx = size * 0.45;
       const cy = size * 0.45;
       const r = size * 0.25;
@@ -1287,13 +1107,11 @@
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Cabo da Lupa
       ctx.beginPath();
       ctx.moveTo(cx + r * 0.72, cy + r * 0.72);
       ctx.lineTo(size * 0.81, size * 0.81);
       ctx.stroke();
 
-      // Cruz Médica Branca
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = size * 0.07;
       const arm = size * 0.12;
@@ -1307,15 +1125,9 @@
       return canvas.toDataURL('image/png');
     }
 
-    function downloadIconPng(size) {
-      const a = document.createElement('a');
-      a.href = generateAppIconDataUrl(size);
-      a.download = `icon-${size}.png`;
-      a.click();
-    }
-
-    function getManifestObject() {
-      return {
+    (function initPwa() {
+      document.getElementById('apple-touch-icon').href = generateAppIconDataUrl(180);
+      const manifestObj = {
         name: "BuscaFarma — Comparador de Preços de Remédios",
         short_name: "BuscaFarma",
         description: "Compare preços de medicamentos nas farmácias online com referência CMED/ANVISA.",
@@ -1329,20 +1141,12 @@
           { src: generateAppIconDataUrl(512), sizes: "512x512", type: "image/png", purpose: "any maskable" }
         ]
       };
-    }
+      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+      document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
 
-    function downloadManifestFile() {
-      const m = getManifestObject();
-      m.icons = [
-        { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
-        { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
-      ];
-      downloadFile('manifest.json', JSON.stringify(m, null, 2), 'application/json');
-    }
-
-    function getSwCode() {
-      return `const CACHE_NAME = 'buscafarma-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        const swCode = `const CACHE_NAME = 'buscafarma-v1';
+const ASSETS = ['/', '/index.html'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
@@ -1350,20 +1154,7 @@ self.addEventListener('install', e => {
 self.addEventListener('fetch', e => {
   e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });`;
-    }
-
-    function downloadSwFile() {
-      downloadFile('sw.js', getSwCode(), 'application/javascript');
-    }
-
-    // Inicializa PWA (Apple Touch Icon, Manifest Blob e Service Worker)
-    (function initPwa() {
-      document.getElementById('apple-touch-icon').href = generateAppIconDataUrl(180);
-      const manifestBlob = new Blob([JSON.stringify(getManifestObject())], { type: 'application/json' });
-      document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
-
-      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-        const swBlob = new Blob([getSwCode()], { type: 'application/javascript' });
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
         navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
       }
     })();
@@ -1434,7 +1225,6 @@ self.addEventListener('fetch', e => {
       m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
     });
 
-    // Status Online/Offline
     function updateOnlineStatus() {
       const dot = document.getElementById('netDot');
       const txt = document.getElementById('netStatus');
@@ -1449,7 +1239,6 @@ self.addEventListener('fetch', e => {
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-    // LGPD
     if (!localStorage.getItem('bf_lgpd_ok')) {
       document.getElementById('lgpdBanner').classList.add('show');
     }
@@ -1458,8 +1247,6 @@ self.addEventListener('fetch', e => {
       document.getElementById('lgpdBanner').classList.remove('show');
     }
 
-    // Inicialização
-    applyAdsenseSlots();
     renderCatalog();
   </script>
 </body>
