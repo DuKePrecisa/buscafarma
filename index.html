@@ -1,0 +1,734 @@
+<!-- ... existing code ... -->
+    <title>BuscaFarma | Comparador de Preços de Medicamentos e Farmácias Online</title>
+    <meta name="description" content="Compare preços de medicamentos em tempo real nas principais farmácias online do Brasil. Encontre ofertas, genéricos e economize até 70% em relação ao PMC Anvisa.">
+    
+    <!-- Metadados PWA e Mobile Web App -->
+    <meta name="theme-color" content="#091b33">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BuscaFarma">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="BuscaFarma">
+
+    <!-- Links dinâmicos de Favicon, Apple Touch Icon e Manifest PWA -->
+    <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="">
+    <link id="dynamicAppleIcon" rel="apple-touch-icon" sizes="180x180" href="">
+    <link id="dynamicManifest" rel="manifest" href="">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+<!-- ... existing code ... -->
+            <div class="flex items-center gap-3">
+                <span id="offlineStatusBadge" class="hidden items-center gap-1 text-[11px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full">
+                    Modo Offline
+                </span>
+                <button onclick="openAdminModal('pwa')" class="text-health-400 hover:text-health-300 font-semibold transition flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Ícones & Arquivos PWA
+                </button>
+                <span class="text-slate-600">|</span>
+                <button onclick="openAdminModal('feed')" class="text-slate-300 hover:text-white underline decoration-slate-600 hover:decoration-white transition flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    Painel Admin / Feed JSON
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cabeçalho Principal -->
+    <header class="bg-navy-900 text-white sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+                
+                <!-- Logo e Seletor de UF (Mobile) -->
+                <div class="w-full lg:w-auto flex items-center justify-between">
+                    <a href="#" onclick="resetAllFilters(); return false;" class="flex items-center gap-2.5 group">
+                        <div class="bg-gradient-to-br from-health-500 to-health-700 p-2 rounded-xl shadow-md group-hover:from-health-400 group-hover:to-health-600 transition relative">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v10m-5-5h10"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16.5 16.5L20 20"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-extrabold tracking-tight text-white">Busca<span class="text-health-500">Farma</span></span>
+                            <span class="block text-[10px] uppercase tracking-widest text-slate-400 -mt-1">Comparador Inteligente</span>
+                        </div>
+                    </a>
+
+                    <!-- Ações Rápidas Mobile (Instalar PWA + Seletor UF) -->
+                    <div class="flex lg:hidden items-center gap-2">
+                        <button onclick="triggerPwaInstall()" id="installPwaBtnMobile" class="flex items-center gap-1.5 bg-health-600 hover:bg-health-500 text-white text-xs font-bold px-2.5 py-1.5 rounded-xl shadow-sm transition">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span>App</span>
+                        </button>
+
+                        <!-- Seletor UF Mobile -->
+                        <div class="flex items-center bg-navy-800 border border-slate-700 rounded-xl px-2.5 py-1.5">
+                            <svg class="w-4 h-4 text-health-500 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <select id="ufSelectMobile" onchange="handleUfChange(this.value)" aria-label="Selecionar Estado" class="bg-transparent text-sm font-semibold text-white focus:outline-none cursor-pointer">
+                                <option value="SP" class="text-slate-900">SP (ICMS 18%)</option>
+                                <option value="RJ" class="text-slate-900">RJ (ICMS 20%)</option>
+                                <option value="MG" class="text-slate-900">MG (ICMS 18%)</option>
+                                <option value="PE" class="text-slate-900">PE (ICMS 20,5%)</option>
+                                <option value="BA" class="text-slate-900">BA (ICMS 20,5%)</option>
+                                <option value="RS" class="text-slate-900">RS (ICMS 17%)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+<!-- ... existing code ... -->
+                <!-- Seletor de Estado/UF e Botão Instalar App (Desktop) -->
+                <div class="hidden lg:flex items-center gap-2.5">
+                    <button onclick="triggerPwaInstall()" id="installPwaBtnDesktop" class="flex items-center gap-2 bg-health-600 hover:bg-health-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-md transition border border-health-400/30" title="Instalar BuscaFarma como aplicativo">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>Instalar App</span>
+                    </button>
+
+                    <div class="flex items-center gap-2 bg-navy-800 border border-slate-700/80 rounded-xl px-3.5 py-2 hover:border-health-500/50 transition">
+                        <div class="bg-health-500/20 p-1.5 rounded-lg text-health-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] uppercase tracking-wider text-slate-400 leading-none">Sua Região / ICMS</span>
+                            <select id="ufSelectDesktop" onchange="handleUfChange(this.value)" aria-label="Selecionar Estado" class="bg-transparent text-sm font-bold text-white focus:outline-none cursor-pointer mt-0.5">
+                                <option value="SP" class="text-slate-900">São Paulo (SP)</option>
+                                <option value="RJ" class="text-slate-900">Rio de Janeiro (RJ)</option>
+                                <option value="MG" class="text-slate-900">Minas Gerais (MG)</option>
+                                <option value="PE" class="text-slate-900">Pernambuco (PE)</option>
+                                <option value="BA" class="text-slate-900">Bahia (BA)</option>
+                                <option value="RS" class="text-slate-900">Rio Grande do Sul (RS)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+<!-- ... existing code ... -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-3">Integração e Arquitetura PWA</h4>
+                    <p class="text-xs leading-relaxed mb-3">
+                        Este portal opera como Progressive Web App (PWA) com feed estruturado JSON compatível com GitHub Pages e Cloudflare Pages.
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openAdminModal('pwa')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-health-600/20 hover:bg-health-600/30 text-health-300 text-xs font-semibold transition border border-health-500/40">
+                            <svg class="w-4 h-4 text-health-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Baixar Ícones & PWA
+                        </button>
+                        <button onclick="openAdminModal('feed')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-navy-800 hover:bg-navy-700 text-white text-xs font-semibold transition border border-slate-700">
+                            <svg class="w-4 h-4 text-health-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            Importar Feed JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+<!-- ... existing code ... -->
+    <!-- MODAL 2: Painel Admin / Importar Feed JSON & Gerador PWA -->
+    <div id="adminModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-end sm:items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div onclick="closeAdminModal()" class="fixed inset-0 bg-navy-950/75 backdrop-blur-sm transition-opacity"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl w-full border border-slate-200">
+                <div class="bg-navy-950 text-white px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="bg-health-500/20 text-health-400 p-2 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold">Painel Admin, Feed JSON & Arquivos PWA</h3>
+                            <p class="text-xs text-slate-400">Arquitetura estática pronta para GitHub Pages e Cloudflare Pages</p>
+                        </div>
+                    </div>
+                    <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Abas do Painel Admin -->
+                <div class="px-6 pt-3 border-b border-slate-200 flex gap-6 bg-slate-50">
+                    <button id="adminTabPwaBtn" onclick="switchAdminTab('pwa')" class="pb-3 text-sm font-bold border-b-2 border-health-600 text-health-700 transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Baixar Ícones & Arquivos PWA
+                    </button>
+                    <button id="adminTabFeedBtn" onclick="switchAdminTab('feed')" class="pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-navy-900 transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        Importar Feed JSON (CMED)
+                    </button>
+                </div>
+
+                <!-- ABA 1: Gerador e Download de Ícones & Arquivos PWA -->
+                <div id="adminPwaContent" class="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs text-navy-900 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <p class="font-bold text-emerald-900 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-health-600"></span>
+                                PWA Ativo em Memória + Pacote de Produção para GitHub/Cloudflare
+                            </p>
+                            <span id="swStatusText" class="text-[11px] font-mono bg-white px-2 py-0.5 rounded border border-emerald-200 text-emerald-800">SW: Verificando...</span>
+                        </div>
+                        <p class="text-slate-700 leading-relaxed">
+                            Os ícones, favicon e manifest já estão ativos dinamicamente nesta página. Para garantir <strong>100% de instalabilidade PWA em produção no GitHub Pages ou Cloudflare Pages</strong>, baixe os 5 arquivos abaixo e coloque-os na pasta raiz junto ao seu <code class="bg-white px-1.5 py-0.5 rounded border border-emerald-200 font-mono">index.html</code>.
+                        </p>
+                    </div>
+
+                    <!-- Pré-visualização dos Ícones Gerados via Canvas/SVG -->
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Pré-visualização dos Ícones Gerados (Identidade BuscaFarma)</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Card Favicon SVG -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center text-center justify-between">
+                                <div class="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center p-2 mb-3">
+                                    <img id="previewFaviconImg" alt="Favicon SVG" class="w-12 h-12 object-contain">
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-navy-900 font-mono">favicon.svg</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Ícone vetorial para abas do navegador</p>
+                                </div>
+                                <button onclick="downloadPwaAsset('favicon.svg')" class="mt-3 w-full py-2 px-3 bg-navy-900 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    Baixar SVG
+                                </button>
+                            </div>
+
+                            <!-- Card Icon 192x192 -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center text-center justify-between">
+                                <div class="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden mb-3">
+                                    <img id="previewIcon192Img" alt="Ícone PWA 192x192" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-navy-900 font-mono">icon-192.png</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Android / Apple Touch (192x192px)</p>
+                                </div>
+                                <button onclick="downloadPwaAsset('icon-192.png')" class="mt-3 w-full py-2 px-3 bg-navy-900 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    Baixar PNG 192
+                                </button>
+                            </div>
+
+                            <!-- Card Icon 512x512 Maskable -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center text-center justify-between">
+                                <div class="w-16 h-16 rounded-full bg-white shadow-sm border-2 border-health-500 flex items-center justify-center overflow-hidden mb-3" title="Simulação Maskable Adaptável">
+                                    <img id="previewIcon512Img" alt="Ícone PWA 512x512 Maskable" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-navy-900 font-mono">icon-512.png</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Splash Screen & Maskable (512x512px)</p>
+                                </div>
+                                <button onclick="downloadPwaAsset('icon-512.png')" class="mt-3 w-full py-2 px-3 bg-navy-900 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    Baixar PNG 512
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arquivos de Configuração PWA (manifest.json e sw.js) -->
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Arquivos de Configuração & Cache Offline</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="text-xs font-bold text-navy-900 font-mono">manifest.json</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Metadados standalone, cores e ícones</p>
+                                </div>
+                                <button onclick="downloadPwaAsset('manifest.json')" class="px-3.5 py-2 bg-slate-800 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition shrink-0 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    Baixar JSON
+                                </button>
+                            </div>
+
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="text-xs font-bold text-navy-900 font-mono">sw.js</p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Service Worker com cache offline</p>
+                                </div>
+                                <button onclick="downloadPwaAsset('sw.js')" class="px-3.5 py-2 bg-slate-800 hover:bg-health-600 text-white text-xs font-bold rounded-lg transition shrink-0 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    Baixar JS
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-200">
+                        <button onclick="downloadAllPwaBundle()" class="px-4 py-2.5 bg-health-600 hover:bg-health-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Baixar Todos os 5 Arquivos PWA
+                        </button>
+                        <button onclick="closeAdminModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ABA 2: Importação de Feed JSON -->
+                <div id="adminFeedContent" class="hidden p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-navy-900 space-y-1.5">
+                        <p class="font-bold">Como automatizar este site no GitHub Pages / Cloudflare Pages:</p>
+                        <p class="text-slate-700 leading-relaxed">
+                            Para manter os preços atualizados sem servidor backend, basta configurar um script agendado (<strong>GitHub Actions</strong> ou <strong>Cloudflare Cron Trigger</strong>) que baixa a planilha mensal da CMED/ANVISA e os feeds XML/JSON das redes de afiliados (Awin, Lomadee, Rakuten), consolidando-os neste formato de objeto padronizado pelo código de barras (EAN).
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="jsonImportInput" class="text-xs font-bold uppercase tracking-wider text-slate-500">Testar Importação de Novo Medicamento (JSON):</label>
+                            <button onclick="loadSampleJsonTemplate()" class="text-xs font-semibold text-health-600 hover:underline">Restaurar exemplo pronto</button>
+                        </div>
+                        <textarea id="jsonImportInput" rows="11" class="w-full font-mono text-xs bg-slate-900 text-emerald-300 p-4 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-health-500"></textarea>
+                    </div>
+
+                    <div id="adminFeedback" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+
+                    <div class="flex flex-wrap justify-end gap-3 pt-2">
+                        <button onclick="closeAdminModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                            Cancelar
+                        </button>
+                        <button onclick="importNewProductFromJson()" class="px-5 py-2.5 bg-health-600 hover:bg-health-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Adicionar Medicamento ao Catálogo da Sessão
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Guia de Instalação PWA (Fallback para iOS / Navegadores sem prompt automático) -->
+    <div id="installGuideModal" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="flex items-end sm:items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div onclick="closeInstallGuideModal()" class="fixed inset-0 bg-navy-950/75 backdrop-blur-sm transition-opacity"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200">
+                <div class="bg-navy-900 text-white px-5 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <img id="guideModalIcon" alt="BuscaFarma App" class="w-9 h-9 rounded-xl border border-slate-700">
+                        <div>
+                            <h3 class="text-base font-extrabold">Instalar BuscaFarma App</h3>
+                            <p class="text-[11px] text-slate-300">Acesso rápido na tela inicial e modo offline</p>
+                        </div>
+                    </div>
+                    <button onclick="closeInstallGuideModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <div class="p-5 space-y-4 text-xs text-slate-700">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
+                        <p class="font-bold text-navy-900 flex items-center gap-1.5">
+                            <span class="bg-navy-900 text-white px-1.5 py-0.5 rounded text-[10px]">iOS</span> Safari (iPhone / iPad)
+                        </p>
+                        <p>1. Toque no botão <strong>Compartilhar</strong> (ícone de quadrado com seta para cima na barra inferior).</p>
+                        <p>2. Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</p>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
+                        <p class="font-bold text-navy-900 flex items-center gap-1.5">
+                            <span class="bg-health-600 text-white px-1.5 py-0.5 rounded text-[10px]">Android / PC</span> Chrome / Edge
+                        </p>
+                        <p>1. Abra o menu do navegador (<strong>⋮</strong>) no canto superior direito.</p>
+                        <p>2. Toque em <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.</p>
+                    </div>
+
+                    <div class="flex justify-end pt-1">
+                        <button onclick="closeInstallGuideModal()" class="w-full py-2.5 bg-navy-900 hover:bg-health-600 text-white font-bold rounded-xl transition">
+                            Entendi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST DE REDIRECIONAMENTO DE AFILIADO -->
+<!-- ... existing code ... -->
+        function openAdminModal(defaultTab = 'pwa') {
+            loadSampleJsonTemplate();
+            document.getElementById('adminFeedback').classList.add('hidden');
+            switchAdminTab(defaultTab);
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function switchAdminTab(tab) {
+            const pwaBtn = document.getElementById('adminTabPwaBtn');
+            const feedBtn = document.getElementById('adminTabFeedBtn');
+            const pwaContent = document.getElementById('adminPwaContent');
+            const feedContent = document.getElementById('adminFeedContent');
+
+            if (tab === 'pwa') {
+                pwaBtn.className = 'pb-3 text-sm font-bold border-b-2 border-health-600 text-health-700 transition flex items-center gap-1.5';
+                feedBtn.className = 'pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-navy-900 transition flex items-center gap-1.5';
+                pwaContent.classList.remove('hidden');
+                feedContent.classList.add('hidden');
+            } else {
+                feedBtn.className = 'pb-3 text-sm font-bold border-b-2 border-health-600 text-health-700 transition flex items-center gap-1.5';
+                pwaBtn.className = 'pb-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-navy-900 transition flex items-center gap-1.5';
+                feedContent.classList.remove('hidden');
+                pwaContent.classList.add('hidden');
+            }
+        }
+
+        function closeAdminModal() {
+// ... existing code ... -->
+        // Fecha modais com tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeCompareModal();
+                closeAdminModal();
+                closeInstallGuideModal();
+            }
+        });
+
+        /**
+         * ============================================================================
+         * GERADOR DINÂMICO DE FAVICON, ÍCONES PWA, MANIFEST E SERVICE WORKER
+         * ============================================================================
+         */
+        const PWA_ASSETS = {
+            faviconSvgString: '',
+            icon192DataUrl: '',
+            icon512DataUrl: '',
+            manifestJsonString: '',
+            swJsString: ''
+        };
+
+        let deferredInstallPrompt = null;
+
+        // Gera o SVG vetorial oficial da BuscaFarma (Cruz médica esmeralda + Lupa azul/branca)
+        function buildBuscaFarmaSvg() {
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f294a"/>
+      <stop offset="100%" stop-color="#051020"/>
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <!-- Fundo Maskable Full-Bleed -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <!-- Anel sutil interno -->
+  <rect x="28" y="28" width="456" height="456" rx="92" fill="none" stroke="#10b981" stroke-opacity="0.25" stroke-width="8"/>
+  <!-- Aro da Lupa -->
+  <circle cx="234" cy="234" r="126" fill="#091b33" stroke="url(#emeraldGrad)" stroke-width="32"/>
+  <!-- Cabo da Lupa -->
+  <line x1="326" y1="326" x2="412" y2="412" stroke="url(#emeraldGrad)" stroke-width="38" stroke-linecap="round"/>
+  <!-- Cruz Médica Moderna no centro da Lupa -->
+  <rect x="212" y="164" width="44" height="140" rx="14" fill="#ffffff"/>
+  <rect x="164" y="212" width="140" height="44" rx="14" fill="#10b981"/>
+</svg>`;
+        }
+
+        // Renderiza o SVG em um Canvas HTML5 para exportar PNGs reais (192x192 e 512x512 maskable)
+        function renderSvgToPngDataUrl(svgString, size) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                const img = new Image();
+                const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+
+                img.onload = () => {
+                    // Preenche fundo sólido para garantir conformidade maskable sem transparência indesejada
+                    ctx.fillStyle = '#091b33';
+                    ctx.fillRect(0, 0, size, size);
+                    ctx.drawImage(img, 0, 0, size, size);
+                    URL.revokeObjectURL(url);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+
+                img.onerror = () => {
+                    // Fallback direto no Canvas caso o navegador restrinja Blob SVG
+                    ctx.fillStyle = '#091b33';
+                    ctx.fillRect(0, 0, size, size);
+                    ctx.strokeStyle = '#10b981';
+                    ctx.lineWidth = size * 0.065;
+                    ctx.beginPath();
+                    ctx.arc(size * 0.46, size * 0.46, size * 0.24, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(size * 0.64, size * 0.64);
+                    ctx.lineTo(size * 0.80, size * 0.80);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(size * 0.42, size * 0.32, size * 0.08, size * 0.28);
+                    ctx.fillStyle = '#10b981';
+                    ctx.fillRect(size * 0.32, size * 0.42, size * 0.28, size * 0.08);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+
+                img.src = url;
+            });
+        }
+
+        // Gera o conteúdo de manifest.json e sw.js prontos para produção e Blob
+        function buildProductionFilesContent() {
+            const manifestObj = {
+                name: "BuscaFarma - Comparador de Preços de Medicamentos",
+                short_name: "BuscaFarma",
+                description: "Compare preços de medicamentos em tempo real nas principais farmácias online do Brasil com referência CMED/ANVISA.",
+                start_url: "./index.html",
+                scope: "./",
+                display: "standalone",
+                orientation: "portrait-primary",
+                theme_color: "#091b33",
+                background_color: "#091b33",
+                lang: "pt-BR",
+                categories: ["health", "medical", "shopping"],
+                icons: [
+                    {
+                        src: "./icon-192.png",
+                        sizes: "192x192",
+                        type: "image/png",
+                        purpose: "any"
+                    },
+                    {
+                        src: "./icon-512.png",
+                        sizes: "512x512",
+                        type: "image/png",
+                        purpose: "any maskable"
+                    },
+                    {
+                        src: "./favicon.svg",
+                        sizes: "any",
+                        type: "image/svg+xml",
+                        purpose: "any"
+                    }
+                ]
+            };
+
+            PWA_ASSETS.manifestJsonString = JSON.stringify(manifestObj, null, 2);
+
+            PWA_ASSETS.swJsString = `// Service Worker Oficial - BuscaFarma PWA (GitHub Pages / Cloudflare Pages)
+const CACHE_NAME = 'buscafarma-pwa-v1';
+const STATIC_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './favicon.svg',
+  './icon-192.png',
+  './icon-512.png'
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)).catch(() => {})
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => cachedResponse);
+      return cachedResponse || fetchPromise;
+    })
+  );
+});
+`;
+        }
+
+        // Inicializa todos os recursos PWA no navegador
+        async function initPwaSystem() {
+            try {
+                PWA_ASSETS.faviconSvgString = buildBuscaFarmaSvg();
+                const svgDataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(PWA_ASSETS.faviconSvgString);
+
+                // Injeta Favicon SVG imediatamente
+                document.getElementById('dynamicFavicon').href = svgDataUri;
+
+                // Gera ícones PNG reais (192x192 e 512x512)
+                const [png192, png512] = await Promise.all([
+                    renderSvgToPngDataUrl(PWA_ASSETS.faviconSvgString, 192),
+                    renderSvgToPngDataUrl(PWA_ASSETS.faviconSvgString, 512)
+                ]);
+
+                PWA_ASSETS.icon192DataUrl = png192;
+                PWA_ASSETS.icon512DataUrl = png512;
+
+                // Injeta Apple Touch Icon
+                document.getElementById('dynamicAppleIcon').href = png192;
+
+                // Atualiza imagens de pré-visualização nos modais
+                document.getElementById('previewFaviconImg').src = svgDataUri;
+                document.getElementById('previewIcon192Img').src = png192;
+                document.getElementById('previewIcon512Img').src = png512;
+                document.getElementById('guideModalIcon').src = png192;
+
+                // Gera arquivos de produção
+                buildProductionFilesContent();
+
+                // Cria Manifest dinâmico com Data URLs para funcionar mesmo sem arquivos externos no servidor
+                const dynamicManifestObj = JSON.parse(PWA_ASSETS.manifestJsonString);
+                dynamicManifestObj.start_url = window.location.href;
+                dynamicManifestObj.scope = './';
+                dynamicManifestObj.icons = [
+                    { src: png192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+                    { src: png512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+                ];
+
+                const manifestBlob = new Blob([JSON.stringify(dynamicManifestObj)], { type: 'application/manifest+json' });
+                const manifestBlobUrl = URL.createObjectURL(manifestBlob);
+                document.getElementById('dynamicManifest').href = manifestBlobUrl;
+
+                // Tenta registrar sw.js físico (se existir no GitHub/Cloudflare) com fallback para Blob SW
+                await registerDynamicServiceWorker();
+            } catch (error) {
+                console.warn('Aviso ao inicializar recursos PWA:', error);
+            }
+        }
+
+        async function registerDynamicServiceWorker() {
+            const swStatusEl = document.getElementById('swStatusText');
+            if (!('serviceWorker' in navigator)) {
+                if (swStatusEl) swStatusEl.textContent = 'SW: Não suportado neste navegador';
+                return;
+            }
+
+            try {
+                // Primeiro tenta registrar ./sw.js físico caso o usuário já tenha subido no repositório
+                const reg = await navigator.serviceWorker.register('./sw.js');
+                if (swStatusEl) swStatusEl.textContent = 'SW: Ativo (./sw.js)';
+                return reg;
+            } catch (_) {
+                // Fallback: registra Service Worker dinâmico via Blob URL
+                try {
+                    const swBlob = new Blob([PWA_ASSETS.swJsString], { type: 'application/javascript' });
+                    const swBlobUrl = URL.createObjectURL(swBlob);
+                    await navigator.serviceWorker.register(swBlobUrl);
+                    if (swStatusEl) swStatusEl.textContent = 'SW: Ativo (Blob Dinâmico)';
+                } catch (blobErr) {
+                    if (swStatusEl) swStatusEl.textContent = 'SW: Pronto para deploy (baixe sw.js)';
+                }
+            }
+        }
+
+        // Captura o evento nativo de instalação PWA (Chrome, Edge, Android)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            const btnDesk = document.getElementById('installPwaBtnDesktop');
+            const btnMob = document.getElementById('installPwaBtnMobile');
+            if (btnDesk) btnDesk.classList.add('ring-2', 'ring-white/60');
+            if (btnMob) btnMob.classList.add('ring-2', 'ring-white/60');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredInstallPrompt = null;
+            const btnDesk = document.getElementById('installPwaBtnDesktop');
+            const btnMob = document.getElementById('installPwaBtnMobile');
+            if (btnDesk) btnDesk.innerHTML = '<span>App Instalado ✓</span>';
+            if (btnMob) btnMob.innerHTML = '<span>Instalado ✓</span>';
+        });
+
+        async function triggerPwaInstall() {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                const { outcome } = await deferredInstallPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    deferredInstallPrompt = null;
+                }
+            } else {
+                // Abre guia visual rápido para iOS Safari ou navegadores sem prompt automático
+                document.getElementById('installGuideModal').classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+        }
+
+        function closeInstallGuideModal() {
+            document.getElementById('installGuideModal').classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // Monitoramento de status Online/Offline
+        function updateOnlineStatus() {
+            const badge = document.getElementById('offlineStatusBadge');
+            if (!badge) return;
+            if (!navigator.onLine) {
+                badge.classList.remove('hidden');
+                badge.classList.add('inline-flex');
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('inline-flex');
+            }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        // Funções de Download dos 5 arquivos físicos para o repositório GitHub / Cloudflare
+        function triggerFileDownload(href, filename) {
+            const a = document.createElement('a');
+            a.href = href;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function downloadPwaAsset(filename) {
+            if (filename === 'favicon.svg') {
+                const blob = new Blob([PWA_ASSETS.faviconSvgString], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                triggerFileDownload(url, 'favicon.svg');
+                setTimeout(() => URL.revokeObjectURL(url), 2000);
+            } else if (filename === 'icon-192.png') {
+                triggerFileDownload(PWA_ASSETS.icon192DataUrl, 'icon-192.png');
+            } else if (filename === 'icon-512.png') {
+                triggerFileDownload(PWA_ASSETS.icon512DataUrl, 'icon-512.png');
+            } else if (filename === 'manifest.json') {
+                const blob = new Blob([PWA_ASSETS.manifestJsonString], { type: 'application/json;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                triggerFileDownload(url, 'manifest.json');
+                setTimeout(() => URL.revokeObjectURL(url), 2000);
+            } else if (filename === 'sw.js') {
+                const blob = new Blob([PWA_ASSETS.swJsString], { type: 'application/javascript;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                triggerFileDownload(url, 'sw.js');
+                setTimeout(() => URL.revokeObjectURL(url), 2000);
+            }
+        }
+
+        function downloadAllPwaBundle() {
+            const files = ['favicon.svg', 'icon-192.png', 'icon-512.png', 'manifest.json', 'sw.js'];
+            files.forEach((file, idx) => {
+                setTimeout(() => downloadPwaAsset(file), idx * 320);
+            });
+        }
+
+        // Inicialização da Aplicação e do Sistema PWA
+        window.addEventListener('DOMContentLoaded', () => {
+            applyFilters();
+            updateOnlineStatus();
+            initPwaSystem();
+        });
+    </script>
+</body>
+</html>
