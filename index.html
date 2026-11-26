@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6508271443030056"
-     crossorigin="anonymous"></script>
   <title>BuscaFarma — Comparador de Preços de Medicamentos Online e Tabela CMED</title>
-  <meta name="description" content="Compare preços de medicamentos genéricos, de referência e similares nas principais farmácias online do Brasil com tabela oficial CMED/ANVISA por estado." />
+  <meta name="description" content="Compare preços reais de medicamentos genéricos, de referência e similares nas principais farmácias online do Brasil com referência CMED/ANVISA." />
   <meta name="theme-color" content="#091b33" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -49,7 +47,7 @@
 
     .container { max-width: 1180px; margin: 0 auto; padding: 0 18px; }
 
-    /* Barra Superior Rede DukePrecisa */
+    /* Barra Superior Rede DuKêPrecisa */
     .top-network {
       background: #051020;
       color: #94a3b8;
@@ -64,7 +62,7 @@
       flex-wrap: wrap;
       gap: 8px;
     }
-    .network-links { display: flex; gap: 14px; }
+    .network-links { display: flex; gap: 14px; flex-wrap: wrap; }
     .network-links a:hover { color: #fff; }
     .status-pill {
       display: inline-flex;
@@ -196,6 +194,7 @@
       cursor: pointer;
     }
     .search-btn:hover { background: #047857; }
+    .search-btn:disabled { opacity: 0.7; cursor: wait; }
     .quick-tags {
       display: flex;
       flex-wrap: wrap;
@@ -282,6 +281,31 @@
       background: #fff;
     }
 
+    /* Loading Spinner */
+    .loading-bar {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .loading-bar.show { display: flex; }
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid #cbd5e1;
+      border-top-color: var(--emerald);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     /* Grid de Produtos */
     .results-meta {
       font-size: 0.88rem;
@@ -339,19 +363,19 @@
       border-radius: 6px;
     }
     .med-title {
-      font-size: 1.06rem;
+      font-size: 1.03rem;
       font-weight: 700;
       color: var(--text);
       margin-bottom: 4px;
     }
     .med-active {
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       color: var(--emerald);
       font-weight: 600;
       margin-bottom: 4px;
     }
     .med-lab {
-      font-size: 0.8rem;
+      font-size: 0.79rem;
       color: var(--muted);
       margin-bottom: 12px;
     }
@@ -407,7 +431,7 @@
       min-height: 240px;
     }
 
-    /* Seção Editorial SEO (Requisito AdSense) */
+    /* Seção Editorial SEO */
     .editorial-box {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -446,14 +470,14 @@
       flex-wrap: wrap;
       gap: 16px;
     }
-    .footer-links button {
+    .footer-links button, .footer-links a {
       background: none;
       border: none;
       color: #cbd5e1;
       cursor: pointer;
       font-size: 0.85rem;
     }
-    .footer-links button:hover { color: #fff; text-decoration: underline; }
+    .footer-links button:hover, .footer-links a:hover { color: #fff; text-decoration: underline; }
 
     /* Modais */
     .modal-backdrop {
@@ -593,17 +617,18 @@
 </head>
 <body>
 
-  <!-- Barra Superior Rede DukePrecisa -->
+  <!-- Barra Superior Rede DuKêPrecisa -->
   <div class="top-network">
     <div class="container top-network-inner">
       <div class="network-links">
-        <a href="https://dukeprecisa.com.br">← Portal DukePrecisa</a>
+        <a href="https://dukeprecisa.com.br">← Portal DuKêPrecisa</a>
         <a href="https://calculatudobox.dukeprecisa.com.br">CalculaTudoBox</a>
         <a href="https://invescalc.dukeprecisa.com.br">InvesCalc</a>
+        <a href="https://sites.google.com/view/dukeprecisa" target="_blank" rel="noopener">🛍️ Loja Parceira</a>
       </div>
       <div class="status-pill">
         <span class="status-dot" id="netDot"></span>
-        <span id="netStatus">Online • Tabela CMED Atualizada</span>
+        <span id="netStatus">Online • Busca em Tempo Real Ativa</span>
       </div>
     </div>
   </div>
@@ -622,7 +647,7 @@
       </a>
 
       <div class="header-actions">
-        <div class="uf-selector" title="Ajusta o ICMS e o Preço Máximo ao Consumidor (CMED)">
+        <div class="uf-selector" title="Ajusta a referência tributária ICMS estadual">
           <span>📍 Estado:</span>
           <select id="ufSelect" aria-label="Selecionar Estado (ICMS)">
             <option value="18" selected>SP / MG / PR (ICMS 18%)</option>
@@ -641,20 +666,20 @@
   <!-- Área de Busca -->
   <section class="hero">
     <div class="container">
-      <h1>Compare preços de remédios nas farmácias online</h1>
-      <p>Pesquise pelo nome do medicamento, princípio ativo, laboratório ou código de barras (EAN) e compare ofertas reais frente ao Preço Máximo ao Consumidor (CMED).</p>
+      <h1>Compare preços reais de remédios nas farmácias online</h1>
+      <p>Digite qualquer medicamento, princípio ativo, laboratório ou código de barras (EAN) para buscar ofertas atualizadas diretamente nas grandes redes de farmácias.</p>
 
       <div class="search-box">
-        <div class="search-input-wrap">
-          <input type="search" id="searchInput" placeholder="Ex: Dipirona 1g, Losartana 50mg, Omeprazol, Amoxicilina..." autocomplete="off" />
-          <button type="button" class="search-btn" onclick="renderCatalog()">Buscar</button>
-        </div>
+        <form class="search-input-wrap" onsubmit="event.preventDefault(); searchLive();">
+          <input type="search" id="searchInput" placeholder="Digite o nome do remédio (ex: Dipirona, Nimesulida, Losartana, Rivotril...)" autocomplete="off" />
+          <button type="submit" id="searchBtn" class="search-btn">Buscar</button>
+        </form>
         <div class="quick-tags">
-          <span>Mais buscados:</span>
+          <span>Buscas rápidas:</span>
           <button type="button" class="quick-tag" onclick="quickSearch('Dipirona')">Dipirona</button>
           <button type="button" class="quick-tag" onclick="quickSearch('Losartana')">Losartana</button>
           <button type="button" class="quick-tag" onclick="quickSearch('Omeprazol')">Omeprazol</button>
-          <button type="button" class="quick-tag" onclick="quickSearch('Amoxicilina')">Amoxicilina</button>
+          <button type="button" class="quick-tag" onclick="quickSearch('Nimesulida')">Nimesulida</button>
           <button type="button" class="quick-tag" onclick="quickSearch('Ibuprofeno')">Ibuprofeno</button>
           <button type="button" class="quick-tag" onclick="quickSearch('Rosuvastatina')">Rosuvastatina</button>
         </div>
@@ -684,15 +709,21 @@
       <div>
         <select id="sortSelect" class="sort-select" onchange="renderCatalog()" aria-label="Ordenar resultados">
           <option value="menor-preco">Ordenar: Menor Preço</option>
-          <option value="maior-desconto">Ordenar: Maior Desconto vs PMC</option>
+          <option value="maior-desconto">Ordenar: Maior Economia</option>
           <option value="az">Ordenar: Nome (A–Z)</option>
         </select>
       </div>
     </div>
 
+    <!-- Indicador de Carregamento -->
+    <div id="loadingBar" class="loading-bar">
+      <div class="spinner"></div>
+      <span id="loadingText">Consultando preços nas farmácias online...</span>
+    </div>
+
     <div class="results-meta">
-      <span id="resultsCount">Carregando medicamentos...</span>
-      <span>Valores ajustados para alíquota ICMS de <strong id="icmsLabel">18%</strong></span>
+      <span id="resultsCount">Carregando ofertas...</span>
+      <span>Referência ICMS: <strong id="icmsLabel">18%</strong></span>
     </div>
 
     <!-- Grade de Medicamentos -->
@@ -710,11 +741,11 @@
     <!-- Conteúdo Editorial Informativo (SEO & Aprovação AdSense) -->
     <section class="editorial-box">
       <h2>Como funciona a comparação de preços no BuscaFarma?</h2>
-      <p>O <strong>BuscaFarma</strong> organiza ofertas de medicamentos comercializados por redes de farmácias licenciadas no Brasil, cruzando o código de barras (EAN) e o princípio ativo com a tabela oficial de Preço Máximo ao Consumidor (PMC) divulgada pela <strong>CMED / ANVISA</strong>.</p>
+      <p>O <strong>BuscaFarma</strong> consulta em tempo real os catálogos públicos das principais redes de farmácias licenciadas no Brasil, agrupando apresentações idênticas por código de barras (EAN) para ajudar você a encontrar o menor preço com segurança.</p>
       <div class="editorial-cols">
         <div>
-          <h3>1. Preço Máximo ao Consumidor (PMC)</h3>
-          <p>É o valor teto autorizado pelo governo brasileiro que uma farmácia pode cobrar por um medicamento, variando conforme a alíquota de ICMS de cada estado.</p>
+          <h3>1. Comparação em Tempo Real</h3>
+          <p>Ao pesquisar um medicamento, nosso sistema verifica disponibilidade e preços atualizados nas lojas online parceiras, exibindo os valores ordenados do menor para o maior.</p>
         </div>
         <div>
           <h3>2. Economia com Medicamentos Genéricos</h3>
@@ -722,7 +753,7 @@
         </div>
         <div>
           <h3>3. Compra Direta na Farmácia</h3>
-          <p>O BuscaFarma não vende medicamentos diretamente: ao escolher a melhor oferta, você é redirecionado para o site oficial da farmácia parceira para concluir seu pedido com segurança.</p>
+          <p>O BuscaFarma não vende medicamentos diretamente: ao escolher a melhor oferta, você é redirecionado para o site oficial da farmácia para concluir seu pedido.</p>
         </div>
       </div>
     </section>
@@ -733,10 +764,12 @@
     <div class="container">
       <div class="footer-grid">
         <div>
-          <strong style="color:#fff; font-size:1.05rem;">BuscaFarma • Rede DukePrecisa</strong>
+          <strong style="color:#fff; font-size:1.05rem;">BuscaFarma • Rede DuKêPrecisa</strong>
           <p style="max-width:480px; margin-top:4px;">Comparador informativo de preços de medicamentos. Não incentivamos a automedicação. Consulte sempre um médico ou farmacêutico.</p>
         </div>
         <div class="footer-links">
+          <a href="https://dukeprecisa.com.br">Portal DuKêPrecisa</a>
+          <a href="https://sites.google.com/view/dukeprecisa" target="_blank" rel="noopener">Loja Parceira</a>
           <button type="button" onclick="openLegalModal('privacidade')">Política de Privacidade</button>
           <button type="button" onclick="openLegalModal('termos')">Termos de Uso & Isenção Médica</button>
           <button type="button" onclick="openLegalModal('contato')">Contato</button>
@@ -752,15 +785,15 @@
       <div class="modal-header">
         <div>
           <span id="modalMedBadge" class="type-badge type-generico">Genérico</span>
-          <h3 id="modalMedTitle" style="margin-top:6px; font-size:1.25rem;">Medicamento</h3>
-          <p id="modalMedSub" style="font-size:0.85rem; color:var(--muted);">Princípio ativo • EAN</p>
+          <h3 id="modalMedTitle" style="margin-top:6px; font-size:1.22rem;">Medicamento</h3>
+          <p id="modalMedSub" style="font-size:0.84rem; color:var(--muted);">Princípio ativo • EAN</p>
         </div>
         <button type="button" class="close-btn" onclick="closeModal('compareModal')" aria-label="Fechar">✕</button>
       </div>
 
       <div class="tabs">
         <button type="button" class="tab-btn active" id="tabOffersBtn" onclick="switchCompareTab('offers')">Ofertas nas Farmácias</button>
-        <button type="button" class="tab-btn" id="tabEquivBtn" onclick="switchCompareTab('equiv')">Mesmo Princípio Ativo (Genéricos)</button>
+        <button type="button" class="tab-btn" id="tabEquivBtn" onclick="switchCompareTab('equiv')">Mesmo Princípio Ativo / Alternativas</button>
       </div>
 
       <div id="compareTabContent"></div>
@@ -785,11 +818,13 @@
   </div>
 
   <script>
+    const WORKER_API_URL = "https://buscafarma-api.apss1975.workers.dev";
     document.getElementById('yearSpan').textContent = new Date().getFullYear();
 
-    const MEDICAMENTOS = [
+    // Catálogo de reserva (caso o usuário esteja offline)
+    const FALLBACK_MEDICAMENTOS = [
       {
-        id: 1,
+        id: "7896422505413",
         nome: "Dipirona Monoidratada 1g (10 Comprimidos)",
         principioAtivo: "Dipirona Monoidratada",
         categoria: "Genérico",
@@ -797,117 +832,20 @@
         ean: "7896422505413",
         pmcBase18: 16.90,
         ofertas: [
-          { farmacia: "Drogasil", preco: 8.49, entrega: "Retire em 1h ou Frete Grátis", url: "https://www.drogasil.com.br" },
-          { farmacia: "Pague Menos", preco: 8.99, entrega: "Entrega Rápida", url: "https://www.paguemenos.com.br" },
-          { farmacia: "Droga Raia", preco: 9.29, entrega: "Retire na Loja", url: "https://www.drogaraia.com.br" },
-          { farmacia: "Drogaria São Paulo", preco: 9.75, entrega: "Entrega Expressa", url: "https://www.drogariasaopaulo.com.br" }
-        ]
-      },
-      {
-        id: 2,
-        nome: "Novalgina 1g (10 Comprimidos Efervescentes)",
-        principioAtivo: "Dipirona Monoidratada",
-        categoria: "Referência",
-        laboratorio: "Sanofi",
-        ean: "7891058017422",
-        pmcBase18: 31.40,
-        ofertas: [
-          { farmacia: "Droga Raia", preco: 22.90, entrega: "Retire em 1h", url: "https://www.drogaraia.com.br" },
-          { farmacia: "Drogasil", preco: 23.50, entrega: "Entrega Hoje", url: "https://www.drogasil.com.br" },
-          { farmacia: "Panvel", preco: 24.10, entrega: "Frete Econômico", url: "https://www.panvel.com" }
-        ]
-      },
-      {
-        id: 3,
-        nome: "Losartana Potássica 50mg (30 Comprimidos)",
-        principioAtivo: "Losartana Potássica",
-        categoria: "Genérico",
-        laboratorio: "EMS",
-        ean: "7896004714523",
-        pmcBase18: 19.80,
-        ofertas: [
-          { farmacia: "Pague Menos", preco: 6.49, entrega: "Retire Grátis na Loja", url: "https://www.paguemenos.com.br" },
-          { farmacia: "Drogasil", preco: 6.99, entrega: "Entrega Expressa", url: "https://www.drogasil.com.br" },
-          { farmacia: "Drogaria Pacheco", preco: 7.50, entrega: "Entrega Hoje", url: "https://www.drogariaspacheco.com.br" }
-        ]
-      },
-      {
-        id: 4,
-        nome: "Omeprazol 20mg (28 Cápsulas)",
-        principioAtivo: "Omeprazol",
-        categoria: "Genérico",
-        laboratorio: "Neo Química",
-        ean: "7896714207315",
-        pmcBase18: 24.50,
-        ofertas: [
-          { farmacia: "Drogaria São Paulo", preco: 9.90, entrega: "Retire em 1h", url: "https://www.drogariasaopaulo.com.br" },
-          { farmacia: "Drogasil", preco: 10.49, entrega: "Entrega Rápida", url: "https://www.drogasil.com.br" },
-          { farmacia: "Pague Menos", preco: 11.20, entrega: "Retire na Loja", url: "https://www.paguemenos.com.br" }
-        ]
-      },
-      {
-        id: 5,
-        nome: "Amoxicilina 500mg (21 Cápsulas) — Receita",
-        principioAtivo: "Amoxicilina Tri-hidratada",
-        categoria: "Genérico",
-        laboratorio: "Eurofarma",
-        ean: "7891317456122",
-        pmcBase18: 34.20,
-        ofertas: [
-          { farmacia: "Droga Raia", preco: 16.80, entrega: "Retirada com Receita na Loja", url: "https://www.drogaraia.com.br" },
-          { farmacia: "Drogasil", preco: 17.40, entrega: "Retirada com Receita na Loja", url: "https://www.drogasil.com.br" },
-          { farmacia: "Pague Menos", preco: 18.90, entrega: "Retirada com Receita", url: "https://www.paguemenos.com.br" }
-        ]
-      },
-      {
-        id: 6,
-        nome: "Ibuprofeno 600mg (20 Comprimidos)",
-        principioAtivo: "Ibuprofeno",
-        categoria: "Genérico",
-        laboratorio: "Prati-Donaduzzi",
-        ean: "7899547510234",
-        pmcBase18: 22.10,
-        ofertas: [
-          { farmacia: "Drogasil", preco: 11.30, entrega: "Entrega Hoje", url: "https://www.drogasil.com.br" },
-          { farmacia: "Pague Menos", preco: 11.95, entrega: "Retire Grátis", url: "https://www.paguemenos.com.br" },
-          { farmacia: "Droga Raia", preco: 12.40, entrega: "Entrega Expressa", url: "https://www.drogaraia.com.br" }
-        ]
-      },
-      {
-        id: 7,
-        nome: "Rosuvastatina Cálcica 10mg (30 Comprimidos)",
-        principioAtivo: "Rosuvastatina Cálcica",
-        categoria: "Genérico",
-        laboratorio: "Sandoz",
-        ean: "7897595618901",
-        pmcBase18: 58.90,
-        ofertas: [
-          { farmacia: "Droga Raia", preco: 21.90, entrega: "Frete Grátis acima de R$ 99", url: "https://www.drogaraia.com.br" },
-          { farmacia: "Drogasil", preco: 22.50, entrega: "Retire em 1h", url: "https://www.drogasil.com.br" },
-          { farmacia: "Drogaria São Paulo", preco: 24.90, entrega: "Entrega Rápida", url: "https://www.drogariasaopaulo.com.br" }
-        ]
-      },
-      {
-        id: 8,
-        nome: "Crestor 10mg (30 Comprimidos)",
-        principioAtivo: "Rosuvastatina Cálcica",
-        categoria: "Referência",
-        laboratorio: "AstraZeneca",
-        ean: "7896206402198",
-        pmcBase18: 129.40,
-        ofertas: [
-          { farmacia: "Drogasil", preco: 89.90, entrega: "Frete Grátis", url: "https://www.drogasil.com.br" },
-          { farmacia: "Droga Raia", preco: 91.50, entrega: "Retire em 1h", url: "https://www.drogaraia.com.br" },
-          { farmacia: "Panvel", preco: 94.00, entrega: "Entrega Expressa", url: "https://www.panvel.com" }
+          { farmacia: "Drogasil", preco: 8.49, entrega: "Retire em 1h ou Frete Grátis", url: "https://www.drogasil.com.br/search?w=dipirona+1g" },
+          { farmacia: "Pague Menos", preco: 8.99, entrega: "Entrega Rápida", url: "https://www.paguemenos.com.br/dipirona" },
+          { farmacia: "Droga Raia", preco: 9.29, entrega: "Retire na Loja", url: "https://www.drogaraia.com.br/search?w=dipirona+1g" }
         ]
       }
     ];
 
+    let MEDICAMENTOS = [];
     let currentCategory = 'todos';
     let selectedMed = null;
+    let lastSearchedTerm = "dipirona";
 
     function formatBRL(val) {
-      return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
     function getIcmsMultiplier() {
@@ -925,38 +863,66 @@
 
     function quickSearch(term) {
       document.getElementById('searchInput').value = term;
-      renderCatalog();
+      searchLive();
     }
 
-    document.getElementById('searchInput').addEventListener('input', renderCatalog);
     document.getElementById('ufSelect').addEventListener('change', renderCatalog);
 
+    // Consulta em tempo real no Cloudflare Worker
+    async function searchLive(customTerm) {
+      const inputVal = (customTerm !== undefined ? customTerm : document.getElementById('searchInput').value).trim();
+      const termo = inputVal || "dipirona";
+      lastSearchedTerm = termo;
+
+      const loadingBar = document.getElementById('loadingBar');
+      const loadingText = document.getElementById('loadingText');
+      const searchBtn = document.getElementById('searchBtn');
+
+      loadingText.textContent = `Buscando "${termo}" nas farmácias online...`;
+      loadingBar.classList.add('show');
+      searchBtn.disabled = true;
+
+      try {
+        const response = await fetch(`${WORKER_API_URL}/?q=${encodeURIComponent(termo)}`);
+        if (!response.ok) throw new Error("Falha na resposta da API");
+        const data = await response.json();
+
+        if (data && data.ok && Array.isArray(data.resultados) && data.resultados.length > 0) {
+          MEDICAMENTOS = data.resultados;
+        } else {
+          MEDICAMENTOS = [];
+        }
+      } catch (err) {
+        console.warn("Erro ao consultar Worker:", err);
+        if (!navigator.onLine) {
+          MEDICAMENTOS = FALLBACK_MEDICAMENTOS;
+        } else {
+          MEDICAMENTOS = [];
+        }
+      } finally {
+        loadingBar.classList.remove('show');
+        searchBtn.disabled = false;
+        renderCatalog();
+      }
+    }
+
     function renderCatalog() {
-      const query = document.getElementById('searchInput').value.trim().toLowerCase();
       const sortBy = document.getElementById('sortSelect').value;
       const mult = getIcmsMultiplier();
 
       let list = MEDICAMENTOS.map(m => {
-        const pmc = +(m.pmcBase18 * mult).toFixed(2);
-        const ofertasAjustadas = m.ofertas
-          .map(o => ({ ...o, precoFinal: +(o.preco * mult).toFixed(2) }))
+        const pmc = +(Number(m.pmcBase18 || 0) * mult).toFixed(2);
+        const ofertasAjustadas = (m.ofertas || [])
+          .map(o => ({ ...o, precoFinal: +(Number(o.preco || 0) * mult).toFixed(2) }))
           .sort((a, b) => a.precoFinal - b.precoFinal);
-        const menorPreco = ofertasAjustadas[0].precoFinal;
-        const desconto = Math.max(0, Math.round(((pmc - menorPreco) / pmc) * 100));
+
+        const menorPreco = ofertasAjustadas.length ? ofertasAjustadas[0].precoFinal : 0;
+        const desconto = pmc > menorPreco ? Math.round(((pmc - menorPreco) / pmc) * 100) : 0;
         return { ...m, pmc, ofertasAjustadas, menorPreco, desconto };
       });
 
       if (currentCategory !== 'todos') {
         list = list.filter(m => m.categoria === currentCategory);
-      }
-
-      if (query) {
-        list = list.filter(m =>
-          m.nome.toLowerCase().includes(query) ||
-          m.principioAtivo.toLowerCase().includes(query) ||
-          m.laboratorio.toLowerCase().includes(query) ||
-          m.ean.includes(query)
-        );
       }
 
       if (sortBy === 'menor-preco') {
@@ -968,38 +934,50 @@
       }
 
       document.getElementById('resultsCount').textContent =
-        list.length === 1 ? '1 medicamento encontrado' : `${list.length} medicamentos encontrados`;
+        list.length === 1
+          ? `1 resultado encontrado para "${lastSearchedTerm}"`
+          : `${list.length} resultados encontrados para "${lastSearchedTerm}"`;
 
       const grid = document.getElementById('medGrid');
       if (list.length === 0) {
-        grid.innerHTML = `<div style="grid-column:1/-1; background:#fff; padding:32px; border-radius:14px; text-align:center; border:1px solid var(--border);">
-          <strong>Nenhum medicamento encontrado para "${query}".</strong>
-          <p style="color:var(--muted); margin-top:6px;">Tente buscar pelo princípio ativo (ex: Dipirona, Losartana) ou limpe os filtros.</p>
-        </div>`;
+        const qEnc = encodeURIComponent(lastSearchedTerm);
+        grid.innerHTML = `
+          <div style="grid-column:1/-1; background:#fff; padding:28px; border-radius:14px; border:1px solid var(--border);">
+            <h3 style="margin-bottom:8px;">Nenhum resultado direto retornado para "${lastSearchedTerm}"</h3>
+            <p style="color:var(--muted); margin-bottom:16px;">Tente simplificar o nome (ex: apenas o princípio ativo sem dosagem) ou pesquise diretamente nas farmácias abaixo:</p>
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+              <a href="https://www.drogasil.com.br/search?w=${qEnc}" target="_blank" rel="noopener" class="btn-store">Buscar na Drogasil ↗</a>
+              <a href="https://www.drogaraia.com.br/search?w=${qEnc}" target="_blank" rel="noopener" class="btn-store">Buscar na Droga Raia ↗</a>
+              <a href="https://www.paguemenos.com.br/${qEnc}" target="_blank" rel="noopener" class="btn-store">Buscar na Pague Menos ↗</a>
+              <a href="https://www.drogariasaopaulo.com.br/${qEnc}" target="_blank" rel="noopener" class="btn-store">Buscar na Drogaria São Paulo ↗</a>
+              <a href="https://www.panvel.com/panvel/buscarProduto.do?termoPesquisa=${qEnc}" target="_blank" rel="noopener" class="btn-store">Buscar na Panvel ↗</a>
+            </div>
+          </div>`;
         return;
       }
 
       let html = '';
       list.forEach((med, idx) => {
         const badgeClass = med.categoria === 'Genérico' ? 'type-generico' : (med.categoria === 'Referência' ? 'type-referencia' : 'type-similar');
+        const safeId = encodeURIComponent(String(med.id));
         html += `
           <article class="med-card">
             <div>
               <div class="badge-row">
                 <span class="type-badge ${badgeClass}">${med.categoria}</span>
-                <span class="discount-badge">-${med.desconto}% vs PMC</span>
+                ${med.desconto > 0 ? `<span class="discount-badge">-${med.desconto}% de economia</span>` : ''}
               </div>
               <h3 class="med-title">${med.nome}</h3>
               <div class="med-active">${med.principioAtivo}</div>
-              <div class="med-lab">Lab: ${med.laboratorio} • EAN: ${med.ean}</div>
+              <div class="med-lab">Marca/Lab: ${med.laboratorio} • EAN: ${med.ean}</div>
             </div>
             <div>
               <div class="price-box">
-                <div class="pmc-line">PMC Teto CMED: ${formatBRL(med.pmc)}</div>
+                ${med.pmc > med.menorPreco ? `<div class="pmc-line">De: ${formatBRL(med.pmc)}</div>` : ''}
                 <div class="best-price">${formatBRL(med.menorPreco)}</div>
-                <div class="store-count">A partir de <strong>${med.ofertasAjustadas[0].farmacia}</strong> (${med.ofertasAjustadas.length} ofertas)</div>
+                <div class="store-count">Menor preço na <strong>${med.ofertasAjustadas[0].farmacia}</strong> (${med.ofertasAjustadas.length} ${med.ofertasAjustadas.length === 1 ? 'oferta' : 'ofertas'})</div>
               </div>
-              <button type="button" class="btn-compare" onclick="openCompareModal(${med.id})">Comparar ${med.ofertasAjustadas.length} ofertas →</button>
+              <button type="button" class="btn-compare" onclick="openCompareModal('${safeId}')">Comparar ${med.ofertasAjustadas.length} ${med.ofertasAjustadas.length === 1 ? 'oferta' : 'ofertas'} →</button>
             </div>
           </article>
         `;
@@ -1018,14 +996,15 @@
     }
 
     // Modal Comparador
-    function openCompareModal(id) {
+    function openCompareModal(encodedId) {
+      const id = decodeURIComponent(encodedId);
       const mult = getIcmsMultiplier();
-      const raw = MEDICAMENTOS.find(m => m.id === id);
+      const raw = MEDICAMENTOS.find(m => String(m.id) === id);
       if (!raw) return;
 
-      const pmc = +(raw.pmcBase18 * mult).toFixed(2);
-      const ofertasAjustadas = raw.ofertas
-        .map(o => ({ ...o, precoFinal: +(o.preco * mult).toFixed(2) }))
+      const pmc = +(Number(raw.pmcBase18 || 0) * mult).toFixed(2);
+      const ofertasAjustadas = (raw.ofertas || [])
+        .map(o => ({ ...o, precoFinal: +(Number(o.preco || 0) * mult).toFixed(2) }))
         .sort((a, b) => a.precoFinal - b.precoFinal);
 
       selectedMed = { ...raw, pmc, ofertasAjustadas };
@@ -1035,7 +1014,7 @@
       badge.className = 'type-badge ' + (raw.categoria === 'Genérico' ? 'type-generico' : (raw.categoria === 'Referência' ? 'type-referencia' : 'type-similar'));
 
       document.getElementById('modalMedTitle').textContent = raw.nome;
-      document.getElementById('modalMedSub').textContent = `Princípio Ativo: ${raw.principioAtivo} • Lab: ${raw.laboratorio} • EAN: ${raw.ean} • PMC CMED: ${formatBRL(pmc)}`;
+      document.getElementById('modalMedSub').textContent = `Princípio Ativo: ${raw.principioAtivo} • Marca/Lab: ${raw.laboratorio} • EAN: ${raw.ean}`;
 
       switchCompareTab('offers');
       document.getElementById('compareModal').classList.add('open');
@@ -1053,7 +1032,7 @@
             <div class="offer-row ${i === 0 ? 'best' : ''}">
               <div>
                 <div style="font-weight:800; font-size:1rem;">${of.farmacia} ${i === 0 ? '<span style="background:#059669;color:#fff;font-size:0.7rem;padding:2px 7px;border-radius:5px;margin-left:6px;">MELHOR PREÇO</span>' : ''}</div>
-                <div style="font-size:0.82rem; color:var(--muted); margin-top:2px;">${of.entrega} • Economia de ${formatBRL(eco)} frente ao teto CMED</div>
+                <div style="font-size:0.82rem; color:var(--muted); margin-top:2px;">${of.entrega} ${eco > 0 ? `• Economia de ${formatBRL(eco)}` : ''}</div>
               </div>
               <div style="text-align:right;">
                 <div class="offer-price">${formatBRL(of.precoFinal)}</div>
@@ -1064,24 +1043,34 @@
         }).join('');
       } else {
         const mult = getIcmsMultiplier();
-        const equivs = MEDICAMENTOS.filter(m => m.principioAtivo === selectedMed.principioAtivo && m.id !== selectedMed.id);
+        const equivs = MEDICAMENTOS.filter(m =>
+          String(m.id) !== String(selectedMed.id) &&
+          (
+            (selectedMed.principioAtivo !== "Consulte a bula" && m.principioAtivo.toLowerCase() === selectedMed.principioAtivo.toLowerCase()) ||
+            m.nome.toLowerCase().includes(lastSearchedTerm.toLowerCase())
+          )
+        ).slice(0, 8);
+
         if (equivs.length === 0) {
-          box.innerHTML = `<p style="color:var(--muted); padding:16px 0;">Não há outras apresentações cadastradas com o princípio ativo <strong>${selectedMed.principioAtivo}</strong> no momento.</p>`;
+          box.innerHTML = `<p style="color:var(--muted); padding:16px 0;">Não encontramos outras apresentações na busca atual. Clique no botão abaixo para buscar genéricos desse princípio ativo:</p>
+            <button type="button" class="btn-action green" onclick="closeModal('compareModal'); quickSearch('${selectedMed.principioAtivo !== 'Consulte a bula' ? selectedMed.principioAtivo : lastSearchedTerm} generico')">Buscar Genéricos Relacionados</button>`;
           return;
         }
-        box.innerHTML = `<p style="font-size:0.86rem; color:var(--muted); margin-bottom:12px;">Opções equivalentes com o mesmo princípio ativo (<strong>${selectedMed.principioAtivo}</strong>):</p>` +
+
+        box.innerHTML = `<p style="font-size:0.86rem; color:var(--muted); margin-bottom:12px;">Outras apresentações e genéricos encontrados nesta pesquisa:</p>` +
           equivs.map(eq => {
             const minPrice = Math.min(...eq.ofertas.map(o => o.preco)) * mult;
+            const safeEqId = encodeURIComponent(String(eq.id));
             return `
               <div class="offer-row">
                 <div>
                   <span class="type-badge ${eq.categoria === 'Genérico' ? 'type-generico' : 'type-referencia'}">${eq.categoria}</span>
                   <div style="font-weight:700; margin-top:4px;">${eq.nome}</div>
-                  <div style="font-size:0.8rem; color:var(--muted);">Laboratório: ${eq.laboratorio}</div>
+                  <div style="font-size:0.8rem; color:var(--muted);">Marca/Lab: ${eq.laboratorio}</div>
                 </div>
                 <div style="text-align:right;">
                   <div class="offer-price">${formatBRL(minPrice)}</div>
-                  <button type="button" class="btn-action" style="margin-top:4px;" onclick="openCompareModal(${eq.id})">Ver ofertas</button>
+                  <button type="button" class="btn-action" style="margin-top:4px;" onclick="openCompareModal('${safeEqId}')">Ver ofertas</button>
                 </div>
               </div>
             `;
@@ -1132,7 +1121,7 @@
       const manifestObj = {
         name: "BuscaFarma — Comparador de Preços de Remédios",
         short_name: "BuscaFarma",
-        description: "Compare preços de medicamentos nas farmácias online com referência CMED/ANVISA.",
+        description: "Compare preços reais de medicamentos nas farmácias online.",
         start_url: "/",
         display: "standalone",
         background_color: "#091b33",
@@ -1147,7 +1136,7 @@
       document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
 
       if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-        const swCode = `const CACHE_NAME = 'buscafarma-v1';
+        const swCode = `const CACHE_NAME = 'buscafarma-v2';
 const ASSETS = ['/', '/index.html'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
@@ -1196,7 +1185,7 @@ self.addEventListener('fetch', e => {
           <h4>1. Natureza Informativa</h4>
           <p>O <strong>BuscaFarma</strong> atua exclusivamente como ferramenta de pesquisa e comparação informativa de preços de medicamentos, sem comercializar produtos diretamente.</p>
           <h4>2. Variação de Preços e Disponibilidade</h4>
-          <p>Os preços exibidos são referências baseadas nas tabelas públicas da CMED/ANVISA e ofertas divulgadas pelas farmácias online, podendo sofrer alterações de estoque, frete ou regras de receita médica no site final da loja.</p>
+          <p>Os preços exibidos são obtidos em tempo real nos catálogos públicos das farmácias online e podem sofrer alterações de estoque, frete ou regras de receita médica no site final da loja.</p>
           <h4>3. Advertência Sanitária</h4>
           <p><strong>A PERSISTIREM OS SINTOMAS, O MÉDICO DEVERÁ SER CONSULTADO.</strong> Medicamentos sujeitos a prescrição médica exigem apresentação de receita conforme legislação sanitária vigente.</p>
         `
@@ -1204,7 +1193,7 @@ self.addEventListener('fetch', e => {
       contato: {
         title: 'Contato — BuscaFarma',
         body: `
-          <p>Para dúvidas, sugestões de medicamentos, parcerias comerciais ou solicitação de remoção/correção de dados, entre em contato com a equipe do portal <strong>DukePrecisa / BuscaFarma</strong>:</p>
+          <p>Para dúvidas, sugestões de melhorias, parcerias comerciais ou solicitação de remoção/correção de dados, entre em contato com a equipe do portal <strong>DuKêPrecisa / BuscaFarma</strong>:</p>
           <p><strong>E-mail:</strong> contato@dukeprecisa.com.br</p>
           <p><strong>Portal Principal:</strong> <a href="https://dukeprecisa.com.br" style="color:#059669;text-decoration:underline;">dukeprecisa.com.br</a></p>
         `
@@ -1232,7 +1221,7 @@ self.addEventListener('fetch', e => {
       const txt = document.getElementById('netStatus');
       if (navigator.onLine) {
         dot.style.background = '#10b981';
-        txt.textContent = 'Online • Tabela CMED Atualizada';
+        txt.textContent = 'Online • Busca em Tempo Real Ativa';
       } else {
         dot.style.background = '#f59e0b';
         txt.textContent = 'Modo Offline (PWA)';
@@ -1249,7 +1238,8 @@ self.addEventListener('fetch', e => {
       document.getElementById('lgpdBanner').classList.remove('show');
     }
 
-    renderCatalog();
+    // Carrega a busca inicial em tempo real ao abrir a página
+    searchLive("dipirona");
   </script>
 </body>
 </html>
